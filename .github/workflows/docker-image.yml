@@ -14,12 +14,18 @@ jobs:
 
     steps:
     - uses: actions/checkout@v4
-    - name: Build the Docker image
-      run: docker build . --file Dockerfile --tag my-image-name:$(date +%s)
+
+    - name: Copy .env.sample to .env
+      run: |
+        cp ./apps/reservations/.env.sample ./apps/reservations/.env
+        cp ./apps/auth/.env.sample ./apps/auth/.env
+        cp ./apps/payments/.env.sample ./apps/payments/.env
+        cp ./apps/notifications/.env.sample ./apps/notifications/.env
       
     - name: Log in to Docker Hub
       run: echo "${{ secrets.DOCKER_PASSWORD }}" | docker login -u ${{ secrets.DOCKER_USERNAME }} --password-stdin
-    # Step 4: Build and push service1 image
+    
+    # Build and push service1 image
     - name: Build and push service1
       run: |
         docker-compose build reservations
