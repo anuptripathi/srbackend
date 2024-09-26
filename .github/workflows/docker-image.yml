@@ -29,16 +29,20 @@ jobs:
     - name: Build and push service1
       run: |
         docker compose build reservations
-        docker push anup84/reservations:latest
+        docker tag sleepr-reservations:latest ${{ secrets.DOCKER_USERNAME }}/reservations:latest
+        docker push ${{ secrets.DOCKER_USERNAME }}/reservations:latest
     - name: Build and push service2
       run: |
         docker compose build payments
-        docker push anup84/payments:latest
+        docker tag sleepr-payments:latest ${{ secrets.DOCKER_USERNAME }}/payments:latest
+        docker push ${{ secrets.DOCKER_USERNAME }}/payments:latest
     - name: Build and push service3
       run: |
         docker compose build auth
-        docker push anup84/auth:latest
+        docker tag sleepr-auth:latest ${{ secrets.DOCKER_USERNAME }}/auth:latest
+        docker push ${{ secrets.DOCKER_USERNAME }}/auth:latest
     - name: Build and push service4
       run: |
         docker compose build notifications
-        docker push anup84/notifications:latest
+        docker tag sleepr-notifications:latest ${{ secrets.DOCKER_USERNAME }}/notifications:latest
+        docker push ${{ secrets.DOCKER_USERNAME }}/notifications:latest
