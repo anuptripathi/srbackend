@@ -28,17 +28,17 @@ jobs:
     # Build and push service1 image
     - name: Build and push service1
       run: |
-        docker-compose build reservations
+        docker compose build reservations
         docker push anup84/reservations:latest
     - name: Build and push service2
       run: |
-        docker-compose build payments
+        docker compose build payments
         docker push anup84/payments:latest
     - name: Build and push service3
       run: |
-        docker-compose build auth
+        docker compose build auth
         docker push anup84/auth:latest
     - name: Build and push service4
       run: |
-        docker-compose build notifications
+        docker compose build notifications
         docker push anup84/notifications:latest
