@@ -15,5 +15,11 @@ spec:
         app: reservations
     spec:
       containers:
-        - image: anup84/sleepr-reservations:latest
+        - image: anup84/reservations:latest
           name: reservations
+          env:
+          - name: MONGODB_URI
+            valueFrom:
+              secretKeyRef:
+                name: mongodb
+                key: connectionString

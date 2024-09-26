@@ -1,0 +1,24 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: notifications
+  name: notifications
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: notifications
+  template:
+    metadata:
+      labels:
+        app: notifications
+    spec:
+      containers:
+      - image: anup84/notifications:latest
+        name: notifications
+        env:
+          - name: TCP_PORT
+            value: '3000'
+        posrts:
+          - containerPort: 3000
