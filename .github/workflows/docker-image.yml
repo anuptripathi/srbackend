@@ -1,0 +1,44 @@
+name: Docker Image CI
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Copy .env.sample to .env
+      run: |
+        cp ./apps/reservations/.env.sample ./apps/reservations/.env
+        cp ./apps/auth/.env.sample ./apps/auth/.env
+        cp ./apps/payments/.env.sample ./apps/payments/.env
+        cp ./apps/notifications/.env.sample ./apps/notifications/.env
+      
+    - name: Log in to Docker Hub
+      run: echo "${{ secrets.DOCKER_PASSWORD }}" | docker login -u ${{ secrets.DOCKER_USERNAME }} --password-stdin
+    
+    # Build and push service1 image
+    - name: Build and push service1
+      run: |
+        docker-compose build reservations
+        docker push anup84/reservations:latest
+    - name: Build and push service2
+      run: |
+        docker-compose build payments
+        docker push anup84/payments:latest
+    - name: Build and push service3
+      run: |
+        docker-compose build auth
+        docker push anup84/auth:latest
+    - name: Build and push service4
+      run: |
+        docker-compose build notifications
+        docker push anup84/notifications:latest
