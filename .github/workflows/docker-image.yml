@@ -1,0 +1,38 @@
+name: Docker Image CI
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v4
+    - name: Build the Docker image
+      run: docker build . --file Dockerfile --tag my-image-name:$(date +%s)
+      
+    - name: Log in to Docker Hub
+      run: echo "${{ secrets.DOCKER_PASSWORD }}" | docker login -u ${{ secrets.DOCKER_USERNAME }} --password-stdin
+    # Step 4: Build and push service1 image
+    - name: Build and push service1
+      run: |
+        docker-compose build reservations
+        docker push anup84/reservations:latest
+    - name: Build and push service2
+      run: |
+        docker-compose build payments
+        docker push anup84/payments:latest
+    - name: Build and push service3
+      run: |
+        docker-compose build auth
+        docker push anup84/auth:latest
+    - name: Build and push service4
+      run: |
+        docker-compose build notifications
+        docker push anup84/notifications:latest
