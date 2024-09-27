@@ -19,6 +19,6 @@ spec:
         name: notifications
         env:
           - name: TCP_PORT
-            value: '3000'
+            value: '3004'
         posrts:
-          - containerPort: 3000
+          - containerPort: 3004
