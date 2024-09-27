@@ -4,3 +4,4 @@ export * from './constants';
 export * from './gaurds';
 export * from './decorators';
 export * from './dtos';
+export * from './health';
