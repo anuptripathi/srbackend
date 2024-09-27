@@ -20,5 +20,5 @@ spec:
         env:
           - name: TCP_PORT
             value: '3004'
-        posrts:
+        ports:
           - containerPort: 3004
