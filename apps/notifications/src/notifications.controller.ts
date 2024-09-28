@@ -1,13 +1,16 @@
 import { Controller, Get } from '@nestjs/common';
 import { NotificationsService } from './notifications.service';
-import { MessagePattern, Payload } from '@nestjs/microservices';
+import {
+  NotificationsServiceController,
+  NotificationsServiceControllerMethods,
+} from '@app/common';
 
 @Controller()
-export class NotificationsController {
+@NotificationsServiceControllerMethods()
+export class NotificationsController implements NotificationsServiceController {
   constructor(private readonly notificationsService: NotificationsService) {}
 
-  @MessagePattern('notifiy_on_email')
-  async notifyOnEmail(@Payload() data) {
+  async notifyEmail(data: any) {
     this.notificationsService.sendEmail(data);
   }
 }

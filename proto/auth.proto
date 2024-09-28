@@ -3,10 +3,10 @@ syntax = "proto3";
 package auth;
 
 service AuthService {
-    rpc Authenticate (Authentication) returns (UserMessage){}
+    rpc Authenticate (AuthenticationMessage) returns (UserMessage){}
 }
 
-message Authentication{
+message AuthenticationMessage{
     string Authentication = 1;
 }
 

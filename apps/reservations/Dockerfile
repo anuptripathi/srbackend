@@ -6,6 +6,8 @@ COPY package.json ./
 COPY pnpm-lock.yaml ./
 COPY tsconfig.json tsconfig.json
 COPY nest-cli.json nest-cli.json
+COPY proto proto
+
 
 RUN npm install -g pnpm
 

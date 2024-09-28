@@ -1,16 +1,21 @@
-import { Inject, Injectable } from '@nestjs/common';
+import { Inject, Injectable, OnModuleInit } from '@nestjs/common';
 import Stripe from 'stripe';
 import { ConfigService } from '@nestjs/config';
 import { PaymentsCreateChargeDto } from './dto/payments-create-charge.dto';
-import { CreateChargeDto, NOTIFICATIONS_SERVICE } from '@app/common';
-import { ClientProxy } from '@nestjs/microservices';
+import {
+  NOTIFICATIONS_SERVICE_NAME,
+  NotificationsServiceClient,
+} from '@app/common';
+import { ClientGrpc } from '@nestjs/microservices';
 @Injectable()
 export class PaymentsService {
+  private notificationsService: NotificationsServiceClient;
   constructor(
     private readonly configService: ConfigService,
-    @Inject(NOTIFICATIONS_SERVICE)
-    private readonly notificationClient: ClientProxy,
+    @Inject(NOTIFICATIONS_SERVICE_NAME)
+    private readonly notificationsClient: ClientGrpc,
   ) {}
+
   private readonly stripe = new Stripe(
     this.configService.getOrThrow('STRIPE_SECRET_KEY'),
     {
@@ -31,8 +36,15 @@ export class PaymentsService {
       currency: 'usd',
     });
 
-    this.notificationClient
-      .send('notifiy_on_email', { email, amount })
+    if (!this.notificationsService) {
+      this.notificationsService =
+        this.notificationsClient.getService<NotificationsServiceClient>(
+          NOTIFICATIONS_SERVICE_NAME,
+        );
+    }
+
+    this.notificationsService
+      .notifyEmail({ email, amount })
       .subscribe((response) => {
         console.log(response);
       });

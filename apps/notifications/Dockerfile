@@ -6,6 +6,7 @@ COPY package.json ./
 COPY pnpm-lock.yaml ./
 COPY tsconfig.json tsconfig.json
 COPY nest-cli.json nest-cli.json
+COPY proto proto
 
 RUN npm install -g pnpm
 
@@ -33,5 +34,6 @@ RUN npm install -g pnpm
 RUN pnpm install --prod
 
 COPY --from=development /usr/src/app/dist ./dist
+
 
 CMD ["node", "dist/apps/notifications/main"]
