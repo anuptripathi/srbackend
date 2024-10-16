@@ -27,7 +27,7 @@ spec:
             - name: HTTP_PORT
               value: '3000'
             - name: AUTH_GRPC_URL
-              value: 'auth:5001'
+              value: 'auth-tcp:5001'
             - name: PAYMENTS_GRPC_URL
               value: 'payments:5001'
           ports:

@@ -37,7 +37,7 @@ spec:
               value: '3001'
 
             - name: AUTH_GRPC_URL
-              value: 'auth:5001'
+              value: 'auth-tcp:5001'
 
           ports:
             - containerPort: 3001
