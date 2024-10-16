@@ -15,7 +15,7 @@ async function bootstrap() {
     options: {
       package: NOTIFICATIONS_PACKAGE_NAME,
       protoPath: join(__dirname, '../../../proto/notifications.proto'),
-      url: 3004, // configService.getOrThrow('NOTIFICATIONS_GRPC_URL'),
+      url: 'notifications:5001', // configService.getOrThrow('NOTIFICATIONS_GRPC_URL'),
     },
   });
   await app.startAllMicroservices();
