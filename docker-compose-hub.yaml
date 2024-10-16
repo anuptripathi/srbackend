@@ -1,7 +1,7 @@
 services:
   reservations:
     image: anup84/reservations:latest
-    command: pnpm run start:dev reservations
+    #command: pnpm run start:dev reservations
     env_file:
       - ./apps/reservations/.env
     ports:
@@ -11,7 +11,7 @@ services:
 
   auth:
     image: anup84/auth:latest
-    command: pnpm run start:dev auth
+    #command: pnpm run start:dev auth
     env_file:
       - ./apps/auth/.env
     ports:
@@ -21,7 +21,7 @@ services:
 
   payments:
     image: anup84/payments:latest
-    command: pnpm run start:dev payments
+    #command: pnpm run start:dev payments
     env_file:
       - ./apps/payments/.env
     volumes:
@@ -29,7 +29,7 @@ services:
 
   notifications:
     image: anup84/notifications:latest
-    command: pnpm run start:dev notifications
+    #command: pnpm run start:dev notifications
     env_file:
       - ./apps/notifications/.env
     volumes:

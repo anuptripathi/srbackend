@@ -7,9 +7,9 @@ metadata:
 spec:
   ports:
     - name: 'tcp'
-      port: 3004
+      port: 5001
       protocol: TCP
-      targetPort: 3004
+      targetPort: 5001
   selector:
     app: notifications
   type: ClusterIP
