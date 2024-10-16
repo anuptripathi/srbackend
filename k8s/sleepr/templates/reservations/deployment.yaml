@@ -26,14 +26,9 @@ spec:
 
             - name: HTTP_PORT
               value: '3000'
-
-            - name: PAYMENTS_HOST
-              value: 'payments'
-            - name: PAYMENTS_PORT
-              value: '3003'
-            - name: AUTH_HOST
-              value: 'auth-tcp'
-            - name: AUTH_PORT
-              value: '3002'
+            - name: AUTH_GRPC_URL
+              value: 'auth:5001'
+            - name: PAYMENTS_GRPC_URL
+              value: 'payments:5001'
           ports:
             - containerPort: 3000

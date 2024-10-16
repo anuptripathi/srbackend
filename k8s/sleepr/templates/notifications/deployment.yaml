@@ -15,10 +15,8 @@ spec:
         app: notifications
     spec:
       containers:
-      - image: anup84/notifications:latest
-        name: notifications
-        env:
-          - name: TCP_PORT
-            value: '3004'
-        ports:
-          - containerPort: 3004
+        - image: anup84/notifications:latest
+          name: notifications
+          env:
+            - name: NOTIFICATIONS_GRPC_URL
+              value: 'notifications:5001'

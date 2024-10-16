@@ -15,19 +15,19 @@ spec:
         app: payments
     spec:
       containers:
-      - image: anup84/payments:latest
-        name: payments
-        env:
-          - name: TCP_PORT
-            value: '3003'
-          - name: NOTIFICATIONS_HOST
-            value: 'notifications'
-          - name: NOTIFICATIONS_PORT
-            value: '3004'
-          - name: STRIPE_SECRET_KEY
-            valueFrom:
-              secretKeyRef:
-                name: stripe
-                key: apiKey     
-        ports:
-          - containerPort: 3003    
+        - image: anup84/payments:latest
+          name: payments
+          env:
+            - name: TCP_PORT
+              value: '3003'
+            - name: NOTIFICATIONS_GRPC_URL
+              value: 'notifications:5001'
+            - name: PAYMENTS_GRPC_URL
+              value: 'payments:5001'
+            - name: STRIPE_SECRET_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: stripe
+                  key: apiKey
+          ports:
+            - containerPort: 3003
