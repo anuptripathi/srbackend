@@ -23,6 +23,7 @@ export class JwtAuthGaurd implements CanActivate, OnModuleInit {
     context: ExecutionContext,
   ): boolean | Promise<boolean> | Observable<boolean> {
     const jwt = context.switchToHttp().getRequest().cookies?.Authentication;
+    console.log('jwt is', jwt);
     if (!jwt) {
       return false;
     }
@@ -32,6 +33,7 @@ export class JwtAuthGaurd implements CanActivate, OnModuleInit {
       })
       .pipe(
         tap((res) => {
+          console.log('the auth service res is', res);
           context.switchToHttp().getRequest().user = res;
         }),
         map(() => true),
