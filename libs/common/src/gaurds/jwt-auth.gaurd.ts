@@ -37,7 +37,10 @@ export class JwtAuthGaurd implements CanActivate, OnModuleInit {
           context.switchToHttp().getRequest().user = res;
         }),
         map(() => true),
-        catchError(() => of(false)),
+        catchError((err) => {
+          console.error('Error caught in JwtAuthGuard:', err); // Log the error here
+          return of(false);
+        }),
       );
   }
 }
