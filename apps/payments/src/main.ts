@@ -15,7 +15,7 @@ async function bootstrap() {
     options: {
       package: PAYMENTS_PACKAGE_NAME,
       protoPath: join(__dirname, '../../../proto/payments.proto'),
-      url: configService.getOrThrow('PAYMENTS_GRPC_URL'),
+      url: '0.0.0.0:5001',
     },
   });
   await app.startAllMicroservices();

@@ -16,7 +16,7 @@ async function bootstrap() {
     options: {
       package: AUTH_PACKAGE_NAME,
       protoPath: join(__dirname, '../../../proto/auth.proto'),
-      url: configService.getOrThrow('AUTH_GRPC_URL'),
+      url: '0.0.0.0:5001',
     },
   });
   app.use(cookieParser());
