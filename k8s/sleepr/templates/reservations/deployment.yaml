@@ -15,8 +15,9 @@ spec:
         app: reservations
     spec:
       containers:
-        - image: anup84/reservations:latest
+        - image: {{ .Values.reservations.image }}
           name: reservations
+          command: {{ .Values.reservations.command | toJson }}
           env:
             - name: MONGODB_URI
               valueFrom:

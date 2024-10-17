@@ -1,0 +1,15 @@
+#values for production environment
+global:
+  environment: dev
+auth:
+  image: anup84/auth:latest
+  command: ['node', 'dist/apps/auth/main']
+reservations:
+  image: anup84/reservations:latest
+  command: ['node', 'dist/apps/reservations/main']
+payments:
+  image: anup84/payments:latest
+  command: ['node', 'dist/apps/payments/main']
+notifications:
+  image: anup84/notifications:latest
+  command: ['node', 'dist/apps/notifications/main']

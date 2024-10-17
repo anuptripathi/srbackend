@@ -15,8 +15,9 @@ spec:
         app: auth
     spec:
       containers:
-        - image: anup84/auth:latest
+        - image: {{ .Values.auth.image }}
           name: auth
+          command: {{ .Values.auth.command | toJson }}
           env:
             - name: MONGODB_URI
               valueFrom:

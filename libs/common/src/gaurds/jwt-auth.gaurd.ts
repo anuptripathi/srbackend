@@ -33,7 +33,7 @@ export class JwtAuthGaurd implements CanActivate, OnModuleInit {
       })
       .pipe(
         tap((res) => {
-          console.log('the auth service res is', res);
+          console.log('Authenticated with: ', res);
           context.switchToHttp().getRequest().user = res;
         }),
         map(() => true),

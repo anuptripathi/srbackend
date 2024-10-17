@@ -1,3 +1,4 @@
+#skaffold for dev environement
 apiVersion: skaffold/v4beta11
 kind: Config
 build:
@@ -6,16 +7,18 @@ build:
       context: .
       docker:
         dockerfile: ./apps/reservations/Dockerfile
+        target: development
       sync:
         manual:
           - src: 'apps/reservations/src/**/*.ts'
-            dest: /usr/src/app/apps/reservations/src
+            dest: /usr/src/app
           - src: 'libs/**/*.ts' # Sync the libs folder as well
-            dest: /usr/src/app/libs # Sync to /usr/src/app/libs in the container
+            dest: /usr/src/app # Sync to /usr/src/app/libs in the container
     - image: anup84/auth
       context: .
       docker:
         dockerfile: ./apps/auth/Dockerfile
+        target: development
       sync:
         manual:
           - src: 'apps/auth/src/**/*.ts'
@@ -26,6 +29,7 @@ build:
       context: .
       docker:
         dockerfile: ./apps/payments/Dockerfile
+        target: development
       sync:
         manual:
           - src: 'apps/payments/src/**/*.ts'
@@ -36,6 +40,7 @@ build:
       context: .
       docker:
         dockerfile: ./apps/notifications/Dockerfile
+        target: development
       sync:
         manual:
           - src: 'apps/notifications/src/**/*.ts'
@@ -48,6 +53,6 @@ deploy:
       - name: sleepr
         chartPath: ./k8s/sleepr
         valuesFiles:
-          - ./k8s/sleepr/values.yaml
+          - ./k8s/sleepr/values-dev.yaml
         setValues:
           global.environment: dev

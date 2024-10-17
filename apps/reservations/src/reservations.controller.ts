@@ -29,6 +29,7 @@ export class ReservationsController {
   @Get()
   @UseGuards(JwtAuthGaurd)
   async findAll() {
+    console.log('Show the result. Now Got the all rese..................');
     return this.reservationsService.findAll();
   }
 

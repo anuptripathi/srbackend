@@ -1,0 +1,4 @@
+k8s/sleepr/templates/auth/deployment.yaml
+k8s/sleepr/templates/reservations/deployment.yaml
+k8s/sleepr/templates/notifications/deployment.yaml
+k8s/sleepr/templates/payments/deployment.yaml

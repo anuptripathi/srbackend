@@ -15,8 +15,9 @@ spec:
         app: payments
     spec:
       containers:
-        - image: anup84/payments:latest
+        - image: {{ .Values.payments.image }}
           name: payments
+          command: {{ .Values.payments.command | toJson }}
           env:
             - name: TCP_PORT
               value: '3003'
