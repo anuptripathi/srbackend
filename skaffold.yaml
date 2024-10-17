@@ -1,0 +1,53 @@
+apiVersion: skaffold/v4beta11
+kind: Config
+build:
+  artifacts:
+    - image: anup84/reservations
+      context: .
+      docker:
+        dockerfile: ./apps/reservations/Dockerfile
+      sync:
+        manual:
+          - src: 'apps/reservations/src/**/*.ts'
+            dest: /usr/src/app/apps/reservations/src
+          - src: 'libs/**/*.ts' # Sync the libs folder as well
+            dest: /usr/src/app/libs # Sync to /usr/src/app/libs in the container
+    - image: anup84/auth
+      context: .
+      docker:
+        dockerfile: ./apps/auth/Dockerfile
+      sync:
+        manual:
+          - src: 'apps/auth/src/**/*.ts'
+            dest: /usr/src/app/apps/auth/src
+          - src: 'libs/**/*.ts'
+            dest: /usr/src/app/libs
+    - image: anup84/payments
+      context: .
+      docker:
+        dockerfile: ./apps/payments/Dockerfile
+      sync:
+        manual:
+          - src: 'apps/payments/src/**/*.ts'
+            dest: /usr/src/app/apps/payments/src
+          - src: 'libs/**/*.ts'
+            dest: /usr/src/app/libs
+    - image: anup84/notifications
+      context: .
+      docker:
+        dockerfile: ./apps/notifications/Dockerfile
+      sync:
+        manual:
+          - src: 'apps/notifications/src/**/*.ts'
+            dest: /usr/src/app/apps/notifications/src
+          - src: 'libs/**/*.ts'
+            dest: /usr/src/app/libs
+deploy:
+  helm:
+    releases:
+      - name: sleepr
+        chartPath: ./k8s/sleepr
+        valuesFiles:
+          - ./k8s/sleepr/values.yaml
+        setValues:
+          global.environment: dev

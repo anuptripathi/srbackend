@@ -1,0 +1,30 @@
+apiVersion: skaffold/v4beta11
+kind: Config
+build:
+  artifacts:
+    - image: anup84/reservations
+      context: .
+      docker:
+        dockerfile: ./apps/reservations/Dockerfile
+    - image: anup84/auth
+      context: .
+      docker:
+        dockerfile: ./apps/auth/Dockerfile
+    - image: anup84/payments
+      context: .
+      docker:
+        dockerfile: ./apps/payments/Dockerfile
+    - image: anup84/notifications
+      context: .
+      docker:
+        dockerfile: ./apps/notifications/Dockerfile
+
+deploy:
+  helm:
+    releases:
+      - name: sleepr
+        chartPath: ./k8s/sleepr
+        valuesFiles:
+          - ./k8s/sleepr/values-prod.yaml
+        setValues:
+          global.environment: prod
