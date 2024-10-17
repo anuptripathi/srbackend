@@ -1,5 +1,6 @@
 #this is for production build test, this is kind of simpley running helm install sleepr "k8s/sleepr".
 #the images are already being built and pushed on docker hub based on github work flow.
+#do skaffold run -f skaffold-prod.yaml --tail
 apiVersion: skaffold/v4beta11
 kind: Config
 deploy:
