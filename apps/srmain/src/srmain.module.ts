@@ -11,10 +11,7 @@ import {
   PAYMENTS_SERVICE_NAME,
 } from '@app/common';
 import { SrmainRepository } from './srmain.repository';
-import {
-  ReservationDocument,
-  ReservationSchema,
-} from './models/reservation.schema';
+import { SrmainDocument, SrmainSchema } from './models/srmain.schema';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { ClientsModule, Transport } from '@nestjs/microservices';
 import { join } from 'path';
@@ -23,7 +20,7 @@ import { join } from 'path';
   imports: [
     DatabaseModule,
     DatabaseModule.forFeature([
-      { name: ReservationDocument.name, schema: ReservationSchema },
+      { name: SrmainDocument.name, schema: SrmainSchema },
     ]),
     LoggerModule,
     ConfigModule.forRoot({

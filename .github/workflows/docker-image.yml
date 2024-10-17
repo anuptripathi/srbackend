@@ -27,20 +27,20 @@ jobs:
       - name: Build and push service1
         run: |
           docker compose build srmain
-          docker tag sleepr-srmain:latest ${{ secrets.DOCKER_USERNAME }}/srmain:latest
+          docker tag siterel-srmain:latest ${{ secrets.DOCKER_USERNAME }}/srmain:latest
           docker push ${{ secrets.DOCKER_USERNAME }}/srmain:latest
       - name: Build and push service2
         run: |
           docker compose build payments
-          docker tag sleepr-payments:latest ${{ secrets.DOCKER_USERNAME }}/payments:latest
+          docker tag siterel-payments:latest ${{ secrets.DOCKER_USERNAME }}/payments:latest
           docker push ${{ secrets.DOCKER_USERNAME }}/payments:latest
       - name: Build and push service3
         run: |
           docker compose build auth
-          docker tag sleepr-auth:latest ${{ secrets.DOCKER_USERNAME }}/auth:latest
+          docker tag siterel-auth:latest ${{ secrets.DOCKER_USERNAME }}/auth:latest
           docker push ${{ secrets.DOCKER_USERNAME }}/auth:latest
       - name: Build and push service4
         run: |
           docker compose build notifications
-          docker tag sleepr-notifications:latest ${{ secrets.DOCKER_USERNAME }}/notifications:latest
+          docker tag siterel-notifications:latest ${{ secrets.DOCKER_USERNAME }}/notifications:latest
           docker push ${{ secrets.DOCKER_USERNAME }}/notifications:latest

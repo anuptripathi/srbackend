@@ -9,8 +9,8 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { SrmainService } from './srmain.service';
-import { CreateReservationDto } from './dto/create-reservation.dto';
-import { UpdateReservationDto } from './dto/update-reservation.dto';
+import { CreateSrmainDto } from './dto/create-srmain.dto';
+import { UpdateSrmainDto } from './dto/update-srmain.dto';
 import { CurrentUser, CurrentUserDto, JwtAuthGaurd } from '@app/common';
 
 @Controller('srmain')
@@ -20,10 +20,10 @@ export class SrmainController {
   @Post()
   @UseGuards(JwtAuthGaurd)
   async create(
-    @Body() createReservationDto: CreateReservationDto,
+    @Body() createSrmainDto: CreateSrmainDto,
     @CurrentUser() user: CurrentUserDto,
   ) {
-    return this.srmainService.create(createReservationDto, user);
+    return this.srmainService.create(createSrmainDto, user);
   }
 
   @Get()
@@ -43,9 +43,9 @@ export class SrmainController {
   @UseGuards(JwtAuthGaurd)
   async update(
     @Param('id') id: string,
-    @Body() updateReservationDto: UpdateReservationDto,
+    @Body() updateSrmainDto: UpdateSrmainDto,
   ) {
-    return this.srmainService.update(id, updateReservationDto);
+    return this.srmainService.update(id, updateSrmainDto);
   }
 
   @Delete(':id')

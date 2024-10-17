@@ -1,4 +1,4 @@
-k8s/sleepr/templates/auth/deployment.yaml
-k8s/sleepr/templates/srmain/deployment.yaml
-k8s/sleepr/templates/notifications/deployment.yaml
-k8s/sleepr/templates/payments/deployment.yaml
+k8s/siterel/templates/auth/deployment.yaml
+k8s/siterel/templates/srmain/deployment.yaml
+k8s/siterel/templates/notifications/deployment.yaml
+k8s/siterel/templates/payments/deployment.yaml

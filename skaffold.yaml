@@ -50,9 +50,9 @@ build:
 deploy:
   helm:
     releases:
-      - name: sleepr
-        chartPath: ./k8s/sleepr
+      - name: siterel
+        chartPath: ./k8s/siterel
         valuesFiles:
-          - ./k8s/sleepr/values-dev.yaml
+          - ./k8s/siterel/values-dev.yaml
         setValues:
           global.environment: dev

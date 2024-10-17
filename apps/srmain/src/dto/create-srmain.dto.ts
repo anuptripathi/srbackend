@@ -10,7 +10,7 @@ import {
   ValidateNested,
 } from 'class-validator';
 
-export class CreateReservationDto {
+export class CreateSrmainDto {
   @IsDate()
   @Type(() => Date)
   startDate: Date;

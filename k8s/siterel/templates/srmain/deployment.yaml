@@ -15,9 +15,9 @@ spec:
         app: srmain
     spec:
       containers:
-        - image: { { .Values.srmain.image } }
+        - image: {{ .Values.srmain.image }}
           name: srmain
-          command: { { .Values.srmain.command | toJson } }
+          command: {{ .Values.srmain.command | toJson }}
           env:
             - name: MONGODB_URI
               valueFrom:
