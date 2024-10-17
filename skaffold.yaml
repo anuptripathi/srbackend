@@ -3,14 +3,14 @@ apiVersion: skaffold/v4beta11
 kind: Config
 build:
   artifacts:
-    - image: anup84/reservations
+    - image: anup84/central
       context: .
       docker:
-        dockerfile: ./apps/reservations/Dockerfile
+        dockerfile: ./apps/central/Dockerfile
         target: development
       sync:
         manual:
-          - src: 'apps/reservations/src/**/*.ts'
+          - src: 'apps/central/src/**/*.ts'
             dest: /usr/src/app
           - src: 'libs/**/*.ts' # Sync the libs folder as well
             dest: /usr/src/app # Sync to /usr/src/app/libs in the container

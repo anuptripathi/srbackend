@@ -1,16 +1,16 @@
 services:
-  reservations:
+  central:
     build:
       context: .
-      dockerfile: ./apps/reservations/Dockerfile
+      dockerfile: ./apps/central/Dockerfile
       target: production
-    command: pnpm run start:dev reservations
+    command: pnpm run start:dev central
     env_file:
-      - ./apps/reservations/.env
+      - ./apps/central/.env
     ports:
       - '3000:3000'
     volumes:
-      - ./apps/reservations/src:/usr/src/app/apps/reservations/src
+      - ./apps/central/src:/usr/src/app/apps/central/src
 
   auth:
     build:

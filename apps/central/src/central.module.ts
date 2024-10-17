@@ -1,6 +1,6 @@
 import { Module } from '@nestjs/common';
-import { ReservationsService } from './reservations.service';
-import { ReservationsController } from './reservations.controller';
+import { CentralService } from './central.service';
+import { CentralController } from './central.controller';
 import {
   DatabaseModule,
   LoggerModule,
@@ -10,7 +10,7 @@ import {
   AUTH_SERVICE_NAME,
   PAYMENTS_SERVICE_NAME,
 } from '@app/common';
-import { ReservationsRepository } from './reservations.repository';
+import { CentralRepository } from './central.repository';
 import {
   ReservationDocument,
   ReservationSchema,
@@ -57,7 +57,7 @@ import { join } from 'path';
     ]),
     HealthModule,
   ],
-  controllers: [ReservationsController],
-  providers: [ReservationsService, ReservationsRepository],
+  controllers: [CentralController],
+  providers: [CentralService, CentralRepository],
 })
-export class ReservationsModule {}
+export class CentralModule {}

@@ -1,7 +1,7 @@
 import { Inject, Injectable, OnModuleInit } from '@nestjs/common';
 import { CreateReservationDto } from './dto/create-reservation.dto';
 import { UpdateReservationDto } from './dto/update-reservation.dto';
-import { ReservationsRepository } from './reservations.repository';
+import { CentralRepository } from './central.repository';
 import {
   CurrentUserDto,
   PAYMENTS_SERVICE_NAME,
@@ -11,10 +11,10 @@ import { ClientGrpc } from '@nestjs/microservices';
 import { map } from 'rxjs';
 
 @Injectable()
-export class ReservationsService implements OnModuleInit {
+export class CentralService implements OnModuleInit {
   private paymentService: PaymentsServiceClient;
   constructor(
-    private readonly reservationRepository: ReservationsRepository,
+    private readonly reservationRepository: CentralRepository,
     @Inject(PAYMENTS_SERVICE_NAME) private readonly paymentClient: ClientGrpc,
   ) {}
 

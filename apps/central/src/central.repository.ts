@@ -5,8 +5,8 @@ import { ReservationDocument } from './models/reservation.schema';
 import { Model } from 'mongoose';
 
 @Injectable()
-export class ReservationsRepository extends AbstractRepository<ReservationDocument> {
-  protected readonly logger = new Logger(ReservationsRepository.name);
+export class CentralRepository extends AbstractRepository<ReservationDocument> {
+  protected readonly logger = new Logger(CentralRepository.name);
   constructor(
     @InjectModel(ReservationDocument.name)
     private readonly reservationModel: Model<ReservationDocument>,

@@ -1,13 +1,13 @@
 services:
-  reservations:
-    image: anup84/reservations:latest
-    #command: pnpm run start:dev reservations
+  central:
+    image: anup84/central:latest
+    #command: pnpm run start:dev central
     env_file:
-      - ./apps/reservations/.env
+      - ./apps/central/.env
     ports:
       - '3000:3000'
     volumes:
-      - ./apps/reservations/src:/usr/src/app/apps/reservations/src
+      - ./apps/central/src:/usr/src/app/apps/central/src
 
   auth:
     image: anup84/auth:latest

@@ -8,11 +8,11 @@ spec:
     - host: localhost
       http:
         paths:
-          - path: /reservations
+          - path: /central
             pathType: Prefix
             backend:
               service:
-                name: reservations
+                name: central
                 port:
                   number: 3000
           - path: /auth

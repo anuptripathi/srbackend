@@ -2,47 +2,45 @@ name: Docker Image CI
 
 on:
   push:
-    branches: [ "main" ]
+    branches: ['main']
   pull_request:
-    branches: [ "main" ]
+    branches: ['main']
 
 jobs:
-
   build:
-
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
-    - name: Copy .env.sample to .env
-      run: |
-        cp ./apps/reservations/.env.sample ./apps/reservations/.env
-        cp ./apps/auth/.env.sample ./apps/auth/.env
-        cp ./apps/payments/.env.sample ./apps/payments/.env
-        cp ./apps/notifications/.env.sample ./apps/notifications/.env
-      
-    - name: Log in to Docker Hub
-      run: echo "${{ secrets.DOCKER_PASSWORD }}" | docker login -u ${{ secrets.DOCKER_USERNAME }} --password-stdin
-    
-    # Build and push service1 image
-    - name: Build and push service1
-      run: |
-        docker compose build reservations
-        docker tag sleepr-reservations:latest ${{ secrets.DOCKER_USERNAME }}/reservations:latest
-        docker push ${{ secrets.DOCKER_USERNAME }}/reservations:latest
-    - name: Build and push service2
-      run: |
-        docker compose build payments
-        docker tag sleepr-payments:latest ${{ secrets.DOCKER_USERNAME }}/payments:latest
-        docker push ${{ secrets.DOCKER_USERNAME }}/payments:latest
-    - name: Build and push service3
-      run: |
-        docker compose build auth
-        docker tag sleepr-auth:latest ${{ secrets.DOCKER_USERNAME }}/auth:latest
-        docker push ${{ secrets.DOCKER_USERNAME }}/auth:latest
-    - name: Build and push service4
-      run: |
-        docker compose build notifications
-        docker tag sleepr-notifications:latest ${{ secrets.DOCKER_USERNAME }}/notifications:latest
-        docker push ${{ secrets.DOCKER_USERNAME }}/notifications:latest
+      - name: Copy .env.sample to .env
+        run: |
+          cp ./apps/central/.env.sample ./apps/central/.env
+          cp ./apps/auth/.env.sample ./apps/auth/.env
+          cp ./apps/payments/.env.sample ./apps/payments/.env
+          cp ./apps/notifications/.env.sample ./apps/notifications/.env
+
+      - name: Log in to Docker Hub
+        run: echo "${{ secrets.DOCKER_PASSWORD }}" | docker login -u ${{ secrets.DOCKER_USERNAME }} --password-stdin
+
+      # Build and push service1 image
+      - name: Build and push service1
+        run: |
+          docker compose build central
+          docker tag sleepr-central:latest ${{ secrets.DOCKER_USERNAME }}/central:latest
+          docker push ${{ secrets.DOCKER_USERNAME }}/central:latest
+      - name: Build and push service2
+        run: |
+          docker compose build payments
+          docker tag sleepr-payments:latest ${{ secrets.DOCKER_USERNAME }}/payments:latest
+          docker push ${{ secrets.DOCKER_USERNAME }}/payments:latest
+      - name: Build and push service3
+        run: |
+          docker compose build auth
+          docker tag sleepr-auth:latest ${{ secrets.DOCKER_USERNAME }}/auth:latest
+          docker push ${{ secrets.DOCKER_USERNAME }}/auth:latest
+      - name: Build and push service4
+        run: |
+          docker compose build notifications
+          docker tag sleepr-notifications:latest ${{ secrets.DOCKER_USERNAME }}/notifications:latest
+          docker push ${{ secrets.DOCKER_USERNAME }}/notifications:latest
