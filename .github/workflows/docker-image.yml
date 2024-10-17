@@ -2,9 +2,9 @@ name: Docker Image CI
 
 on:
   push:
-    branches: ['main']
+    branches: ['main-random_branch_so_that_it_does_not_run_for_now']
   pull_request:
-    branches: ['main']
+    branches: ['main-random_branch_so_that_it_does_not_run_for_now']
 
 jobs:
   build:
