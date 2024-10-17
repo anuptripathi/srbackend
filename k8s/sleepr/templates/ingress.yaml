@@ -8,11 +8,11 @@ spec:
     - host: localhost
       http:
         paths:
-          - path: /central
+          - path: /srmain
             pathType: Prefix
             backend:
               service:
-                name: central
+                name: srmain
                 port:
                   number: 3000
           - path: /auth

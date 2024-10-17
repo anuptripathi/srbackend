@@ -13,10 +13,10 @@ RUN npm install -g pnpm
 
 RUN pnpm install
 
-COPY apps/central apps/central
+COPY apps/srmain apps/srmain
 COPY libs libs
 
-RUN pnpm run build central
+RUN pnpm run build srmain
 
 FROM node:alpine as production
 
@@ -35,4 +35,4 @@ RUN pnpm install --prod
 COPY --from=development /usr/src/app/dist ./dist
 COPY proto proto
 
-CMD ["node", "dist/apps/central/main"]
+CMD ["node", "dist/apps/srmain/main"]

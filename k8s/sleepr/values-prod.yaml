@@ -4,9 +4,9 @@ global:
 auth:
   image: anup84/auth:latest
   command: ['node', 'dist/apps/auth/main']
-central:
-  image: anup84/central:latest
-  command: ['node', 'dist/apps/central/main']
+srmain:
+  image: anup84/srmain:latest
+  command: ['node', 'dist/apps/srmain/main']
 payments:
   image: anup84/payments:latest
   command: ['node', 'dist/apps/payments/main']

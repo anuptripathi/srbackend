@@ -4,9 +4,9 @@ global:
 auth:
   image: anup84/auth:latest
   command: ['pnpm', 'run', 'start:dev', 'auth']
-central:
-  image: anup84/central:latest
-  command: ['pnpm', 'run', 'start:dev', 'central']
+srmain:
+  image: anup84/srmain:latest
+  command: ['pnpm', 'run', 'start:dev', 'srmain']
 payments:
   image: anup84/payments:latest
   command: ['pnpm', 'run', 'start:dev', 'payments']

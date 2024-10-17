@@ -1,12 +1,12 @@
 import { NestFactory } from '@nestjs/core';
-import { CentralModule } from './central.module';
+import { SrmainModule } from './srmain.module';
 import { ValidationPipe } from '@nestjs/common';
 import { Logger } from 'nestjs-pino';
 import { ConfigService } from '@nestjs/config';
 import * as cookieParser from 'cookie-parser';
 
 async function bootstrap() {
-  const app = await NestFactory.create(CentralModule);
+  const app = await NestFactory.create(SrmainModule);
   app.useGlobalPipes(new ValidationPipe({ whitelist: true }));
   app.useLogger(app.get(Logger));
   app.use(cookieParser());

@@ -1,13 +1,13 @@
 services:
-  central:
-    image: anup84/central:latest
-    #command: pnpm run start:dev central
+  srmain:
+    image: anup84/srmain:latest
+    #command: pnpm run start:dev srmain
     env_file:
-      - ./apps/central/.env
+      - ./apps/srmain/.env
     ports:
       - '3000:3000'
     volumes:
-      - ./apps/central/src:/usr/src/app/apps/central/src
+      - ./apps/srmain/src:/usr/src/app/apps/srmain/src
 
   auth:
     image: anup84/auth:latest

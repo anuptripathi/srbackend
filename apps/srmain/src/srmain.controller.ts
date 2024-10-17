@@ -8,14 +8,14 @@ import {
   Delete,
   UseGuards,
 } from '@nestjs/common';
-import { CentralService } from './central.service';
+import { SrmainService } from './srmain.service';
 import { CreateReservationDto } from './dto/create-reservation.dto';
 import { UpdateReservationDto } from './dto/update-reservation.dto';
 import { CurrentUser, CurrentUserDto, JwtAuthGaurd } from '@app/common';
 
-@Controller('central')
-export class CentralController {
-  constructor(private readonly centralService: CentralService) {}
+@Controller('srmain')
+export class SrmainController {
+  constructor(private readonly srmainService: SrmainService) {}
 
   @Post()
   @UseGuards(JwtAuthGaurd)
@@ -23,20 +23,20 @@ export class CentralController {
     @Body() createReservationDto: CreateReservationDto,
     @CurrentUser() user: CurrentUserDto,
   ) {
-    return this.centralService.create(createReservationDto, user);
+    return this.srmainService.create(createReservationDto, user);
   }
 
   @Get()
   @UseGuards(JwtAuthGaurd)
   async findAll() {
     console.log('Show the result. Now Got the all rese..................');
-    return this.centralService.findAll();
+    return this.srmainService.findAll();
   }
 
   @Get(':id')
   @UseGuards(JwtAuthGaurd)
   async findOne(@Param('id') id: string) {
-    return this.centralService.findOne(id);
+    return this.srmainService.findOne(id);
   }
 
   @Patch(':id')
@@ -45,12 +45,12 @@ export class CentralController {
     @Param('id') id: string,
     @Body() updateReservationDto: UpdateReservationDto,
   ) {
-    return this.centralService.update(id, updateReservationDto);
+    return this.srmainService.update(id, updateReservationDto);
   }
 
   @Delete(':id')
   @UseGuards(JwtAuthGaurd)
   async remove(@Param('id') id: string) {
-    return this.centralService.remove(id);
+    return this.srmainService.remove(id);
   }
 }

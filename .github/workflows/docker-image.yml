@@ -15,7 +15,7 @@ jobs:
 
       - name: Copy .env.sample to .env
         run: |
-          cp ./apps/central/.env.sample ./apps/central/.env
+          cp ./apps/srmain/.env.sample ./apps/srmain/.env
           cp ./apps/auth/.env.sample ./apps/auth/.env
           cp ./apps/payments/.env.sample ./apps/payments/.env
           cp ./apps/notifications/.env.sample ./apps/notifications/.env
@@ -26,9 +26,9 @@ jobs:
       # Build and push service1 image
       - name: Build and push service1
         run: |
-          docker compose build central
-          docker tag sleepr-central:latest ${{ secrets.DOCKER_USERNAME }}/central:latest
-          docker push ${{ secrets.DOCKER_USERNAME }}/central:latest
+          docker compose build srmain
+          docker tag sleepr-srmain:latest ${{ secrets.DOCKER_USERNAME }}/srmain:latest
+          docker push ${{ secrets.DOCKER_USERNAME }}/srmain:latest
       - name: Build and push service2
         run: |
           docker compose build payments
