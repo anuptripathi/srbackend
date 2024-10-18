@@ -76,4 +76,64 @@ export class UsersService {
       return userVal;
     }
   }
+
+  async updateUserHierarchy(
+    userId: string,
+    newParentId: string,
+  ): Promise<void> {
+    const newParent = await this.usersRepository.findById(newParentId);
+    if (!newParent) {
+      throw new Error('New parent not found');
+    }
+
+    // Fetch the user and update their ancestor_ids
+    const user = await this.usersRepository.findById(userId);
+    const newAncestorIds = [
+      ...newParent.ancestor_ids,
+      newParent._id.toString(),
+    ];
+    await this.usersRepository.findOneAndUpdate(
+      { _id: userId },
+      { ancestor_ids: newAncestorIds },
+    );
+
+    // Recursively update all descendants' ancestor_ids
+    await this.updateDescendantAncestors(userId, newAncestorIds);
+
+    // Update products owned by the user
+    await this.usersRepository.findManyAndUpdate(
+      { parent_id: userId },
+      { ancestor_ids: newAncestorIds },
+    );
+  }
+
+  // Recursively update all descendants
+  private async updateDescendantAncestors(
+    userId: string,
+    newAncestorIds: string[],
+  ): Promise<void> {
+    const descendants = await this.usersRepository.find({
+      ancestor_ids: userId,
+    });
+    for (const descendant of descendants) {
+      const updatedAncestorIds = [...newAncestorIds, descendant._id.toString()];
+      await this.usersRepository.findOneAndUpdate(
+        { _id: descendant._id },
+        { ancestor_ids: updatedAncestorIds },
+      );
+
+      // Update products owned by the descendant
+      //******************* DO THIS BY SENDING EVENTS TO PRODUCT/OTHER MICROSERVICES */
+      /*await this.productRepository.updateMany(
+        { owner_id: descendant._id },
+        { ancestor_ids: updatedAncestorIds },
+      );*/
+
+      // Recursively update descendants of the current descendant
+      await this.updateDescendantAncestors(
+        descendant._id.toString(),
+        updatedAncestorIds,
+      );
+    }
+  }
 }

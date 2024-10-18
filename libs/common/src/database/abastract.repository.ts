@@ -57,6 +57,24 @@ export abstract class AbstractRepository<TDocument extends AbstractDocument> {
     return document;
   }
 
+  async findManyAndUpdate(
+    filterQuery: FilterQuery<TDocument>,
+    update: UpdateQuery<TDocument>,
+  ): Promise<TDocument> {
+    const document = await this.model
+      .updateMany(filterQuery, update, {
+        new: true,
+      })
+      .lean<TDocument>(true);
+
+    if (!document) {
+      this.logger.warn('Document was not found with filterQuery', filterQuery);
+      throw new NotFoundException('Document was not found');
+    }
+
+    return document;
+  }
+
   async find(filterQuery: FilterQuery<TDocument>): Promise<TDocument[]> {
     return this.model.find(filterQuery).lean<TDocument[]>(true);
   }
