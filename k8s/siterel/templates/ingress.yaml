@@ -2,20 +2,22 @@ apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
   name: siterel-ingress
+  annotations:
+    nginx.ingress.kubernetes.io/rewrite-target: /$1$2$3 # Rewrite to preserve the /auth part
 spec:
   ingressClassName: nginx
   rules:
     - host: localhost
       http:
         paths:
-          - path: /srmain
+          - path: /api/(srmain)(/|$)(.*)
             pathType: Prefix
             backend:
               service:
                 name: srmain
                 port:
                   number: 3000
-          - path: /auth
+          - path: /api/(auth)(/|$)(.*)
             pathType: Prefix
             backend:
               service:

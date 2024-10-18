@@ -11,6 +11,7 @@ import { join } from 'path';
 async function bootstrap() {
   const app = await NestFactory.create(AuthModule);
   const configService = app.get(ConfigService);
+  app.setGlobalPrefix('auth');
   app.connectMicroservice({
     transport: Transport.GRPC,
     options: {

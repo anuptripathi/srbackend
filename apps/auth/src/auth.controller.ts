@@ -11,7 +11,7 @@ import { Response } from 'express';
 import { JwtAuthGaurd } from './guards/jwt-auth.gaurd';
 import { MessagePattern, Payload } from '@nestjs/microservices';
 
-@Controller('auth')
+@Controller()
 @AuthServiceControllerMethods()
 export class AuthController implements AuthServiceController {
   constructor(private readonly authService: AuthService) {}

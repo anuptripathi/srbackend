@@ -22,9 +22,9 @@ build:
       sync:
         manual:
           - src: 'apps/auth/src/**/*.ts'
-            dest: /usr/src/app/apps/auth/src
+            dest: /usr/src/app
           - src: 'libs/**/*.ts'
-            dest: /usr/src/app/libs
+            dest: /usr/src/app
     - image: anup84/payments
       context: .
       docker:
@@ -33,9 +33,9 @@ build:
       sync:
         manual:
           - src: 'apps/payments/src/**/*.ts'
-            dest: /usr/src/app/apps/payments/src
+            dest: /usr/src/app
           - src: 'libs/**/*.ts'
-            dest: /usr/src/app/libs
+            dest: /usr/src/app
     - image: anup84/notifications
       context: .
       docker:
@@ -44,9 +44,9 @@ build:
       sync:
         manual:
           - src: 'apps/notifications/src/**/*.ts'
-            dest: /usr/src/app/apps/notifications/src
+            dest: /usr/src/app
           - src: 'libs/**/*.ts'
-            dest: /usr/src/app/libs
+            dest: /usr/src/app
 deploy:
   helm:
     releases:

@@ -13,11 +13,35 @@ import { TokenPayload } from '../interfaces/token-payload.interface';
 export class UsersService {
   constructor(private readonly usersRepository: UsersRepository) {}
 
-  async create(usersCreateDto: UsersCreateDto): Promise<UsersDocument> {
+  async createUser(
+    usersCreateDto: UsersCreateDto,
+    parentId?: string,
+  ): Promise<UsersDocument> {
     await this.createUserValidateDto(usersCreateDto.email);
+    let ancestorIds: string[] = [];
+
+    // If the user has a parent, inherit the parent's ancestor_ids and add the parent ID
+    if (parentId) {
+      const parent = await this.usersRepository.findById(parentId);
+      if (!parent) {
+        throw new Error('Parent not found');
+      }
+
+      if (!Array.isArray(parent.ancestor_ids)) {
+        // throw new Error('parent.ancestor_ids is not an array'); // Ensure it's an array
+        ancestorIds = [parent._id.toString()];
+      } else {
+        // Inherit parent's ancestor_ids and add parent's ID
+        ancestorIds = [...parent.ancestor_ids, parent._id.toString()];
+      }
+    }
+
     return this.usersRepository.create({
       ...usersCreateDto,
       password: await bcrypt.hash(usersCreateDto.password, 10),
+      parent_id: parentId || null, //this is owner_id, that can be different from logged user, for a swithed account.
+      added_by: parentId || null,
+      ancestor_ids: ancestorIds,
     });
   }
 
