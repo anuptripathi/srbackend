@@ -21,6 +21,9 @@ export class UsersDocument extends AbstractDocument {
 
   @Prop({ required: true })
   u_type: string; // user type, like superadmin, partner, admin etc.
+
+  @Prop()
+  accountId?: string;
 }
 
 export const UsersSchema = SchemaFactory.createForClass(UsersDocument);

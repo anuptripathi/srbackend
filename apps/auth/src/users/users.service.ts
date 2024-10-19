@@ -8,41 +8,73 @@ import { UsersDocument } from './models/users.schema';
 import { UsersCreateDto } from './dto/users-create-dto';
 import * as bcrypt from 'bcryptjs';
 import { CurrentUserDto } from '@app/common';
+import { UserLevels, UserTypes } from './user.types';
 
 @Injectable()
 export class UsersService {
   constructor(private readonly usersRepository: UsersRepository) {}
 
+  // ancestorIds is chain of all parents from top most to bottom most.
+  // acountId will be equal to users._id if superadmin creates a partner or admin
+  // acountId will be equal to users._id if parther creates admin.
+  // accountId will be accountId of loggedIn user, if superadmin, partner or admin creats another account of same level, or enduser.
+  // ie someone (loggedIn user) creates lover level account (but not enduser), the accountId will be the users._id of the created account
   async createUser(
     usersCreateDto: UsersCreateDto,
-    parentId?: string,
+    loggedInUserId: string,
   ): Promise<UsersDocument> {
     await this.createUserValidateDto(usersCreateDto.email);
     let ancestorIds: string[] = [];
+    let accountId: string;
+    let newAccoutnId: boolean = false;
 
-    // If the user has a parent, inherit the parent's ancestor_ids and add the parent ID
-    if (parentId) {
-      const parent = await this.usersRepository.findById(parentId);
-      if (!parent) {
-        throw new Error('Parent not found');
-      }
-
-      if (!Array.isArray(parent.ancestor_ids)) {
-        // throw new Error('parent.ancestor_ids is not an array'); // Ensure it's an array
-        ancestorIds = [parent._id.toString()];
-      } else {
-        // Inherit parent's ancestor_ids and add parent's ID
-        ancestorIds = [...parent.ancestor_ids, parent._id.toString()];
-      }
+    const loggedInUser = await this.usersRepository.findById(loggedInUserId);
+    if (!loggedInUser) {
+      throw new Error('Parent not found');
     }
 
-    return this.usersRepository.create({
+    if (!Array.isArray(loggedInUser.ancestor_ids)) {
+      // throw new Error('parent.ancestor_ids is not an array'); // Ensure it's an array
+      ancestorIds = [loggedInUser._id.toString()];
+    } else {
+      // Inherit parent's ancestor_ids and add parent's ID
+      ancestorIds = [...loggedInUser.ancestor_ids, loggedInUser._id.toString()];
+    }
+    const toSaveUserType = usersCreateDto.u_type;
+    const loggedInUserType = loggedInUser?.u_type
+      ? loggedInUser.u_type
+      : UserTypes.ENDUSER;
+    const userTypeLevels = new UserLevels();
+    //if enduser or similar level account then, accountId will be loggedInUser's accountId else createdUsers's _id
+    if (
+      toSaveUserType === UserTypes.ENDUSER ||
+      userTypeLevels[toSaveUserType] === userTypeLevels[loggedInUserType]
+    ) {
+      accountId = loggedInUser?.accountId ? loggedInUser.accountId : null;
+    } else if (
+      userTypeLevels[toSaveUserType] < userTypeLevels[loggedInUserType]
+    ) {
+      newAccoutnId = true;
+    } else {
+      throw new Error('The selection of the UserType (u_type) is not allowd');
+    }
+
+    let createdUser = await this.usersRepository.create({
       ...usersCreateDto,
       password: await bcrypt.hash(usersCreateDto.password, 10),
-      parent_id: parentId || null, //this is owner_id, that can be different from logged user, for a swithed account.
-      added_by: parentId || null,
+      parent_id: loggedInUserId || null, // ie owner_id
+      added_by: loggedInUserId || null, // this can be different from parent_id, in case if someone else on behalf of the parent_id/owner_id adds/edits the record
       ancestor_ids: ancestorIds,
+      accountId,
     });
+
+    if (newAccoutnId) {
+      createdUser = await this.usersRepository.findOneAndUpdate(
+        { _id: createdUser._id },
+        { accountId: createdUser._id },
+      );
+    }
+    return createdUser;
   }
 
   private async createUserValidateDto(email: string) {
