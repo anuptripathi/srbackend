@@ -17,8 +17,8 @@ export class UsersService {
   // ancestorIds is chain of all parents from top most to bottom most.
   // acountId will be equal to users._id if superadmin creates a partner or admin
   // acountId will be equal to users._id if parther creates admin.
-  // accountId will be accountId of loggedIn user, if superadmin, partner or admin creats another account of same level, or enduser.
-  // ie someone (loggedIn user) creates lover level account (but not enduser), the accountId will be the users._id of the created account
+  // accountId will be accountId of loggedIn user, if superadmin, partner or admin creats another account of same level, or enduser/moderator/supervisor.
+  // ie someone (loggedIn user) creates lover level account (but not enduser/moderator), the accountId will be the users._id of the created account
   async createUser(
     usersCreateDto: UsersCreateDto,
     loggedInUserId: string,
@@ -45,9 +45,10 @@ export class UsersService {
       ? loggedInUser.u_type
       : UserTypes.ENDUSER;
     const userTypeLevels = new UserLevels();
-    //if enduser or similar level account then, accountId will be loggedInUser's accountId else createdUsers's _id
+    //if enduser/moderator/supervisor or similar level account then, accountId will be loggedInUser's accountId else createdUsers's _id
     if (
       toSaveUserType === UserTypes.ENDUSER ||
+      toSaveUserType === UserTypes.MODERATOR ||
       userTypeLevels[toSaveUserType] === userTypeLevels[loggedInUserType]
     ) {
       accountId = loggedInUser?.accountId ? loggedInUser.accountId : null;
