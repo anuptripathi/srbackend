@@ -1,8 +1,7 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { AbstractDocument } from '@app/common';
-import { UserTypes } from '../user.types';
 
-@Schema({ versionKey: false })
+@Schema({ versionKey: false, timestamps: true })
 export class UsersDocument extends AbstractDocument {
   @Prop()
   email: string;
