@@ -104,6 +104,8 @@ export class UsersService {
       const userVal: CurrentUserDto = {
         userId: user._id.toHexString(),
         email: user.email,
+        u_type: user?.u_type,
+        accountId: user?.accountId,
       };
       return userVal;
     }
