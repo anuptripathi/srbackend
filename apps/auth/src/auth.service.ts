@@ -2,7 +2,6 @@ import { Injectable } from '@nestjs/common';
 import { Response } from 'express';
 import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
-import { TokenPayload } from './interfaces/token-payload.interface';
 import { CurrentUserDto } from '@app/common';
 
 @Injectable()
@@ -12,7 +11,7 @@ export class AuthService {
     private readonly jwtService: JwtService,
   ) {}
   async login(user: CurrentUserDto, response: Response) {
-    const tokenPayload: TokenPayload = {
+    const tokenPayload: CurrentUserDto = {
       userId: user.userId.toString(),
       email: user.email,
     };

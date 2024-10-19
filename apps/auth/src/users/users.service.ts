@@ -7,7 +7,7 @@ import { UsersRepository } from './users.repository';
 import { UsersDocument } from './models/users.schema';
 import { UsersCreateDto } from './dto/users-create-dto';
 import * as bcrypt from 'bcryptjs';
-import { TokenPayload } from '../interfaces/token-payload.interface';
+import { CurrentUserDto } from '@app/common';
 
 @Injectable()
 export class UsersService {
@@ -69,7 +69,7 @@ export class UsersService {
     if (!passwordIsValid) {
       throw new UnauthorizedException('Credentials are not vlaid');
     } else {
-      const userVal: TokenPayload = {
+      const userVal: CurrentUserDto = {
         userId: user._id.toHexString(),
         email: user.email,
       };
