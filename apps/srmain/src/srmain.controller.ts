@@ -11,7 +11,14 @@ import {
 import { SrmainService } from './srmain.service';
 import { CreateSrmainDto } from './dto/create-srmain.dto';
 import { UpdateSrmainDto } from './dto/update-srmain.dto';
-import { CurrentUser, CurrentUserDto, JwtAuthGaurd } from '@app/common';
+import {
+  CurrentUser,
+  CurrentUserDto,
+  RequiredUserType,
+  JwtAuthGaurd,
+  UserTypeGuard,
+  UserTypes,
+} from '@app/common';
 
 @Controller('srmain')
 export class SrmainController {
@@ -27,7 +34,8 @@ export class SrmainController {
   }
 
   @Get()
-  @UseGuards(JwtAuthGaurd)
+  @RequiredUserType(UserTypes.PARTNER, UserTypes.SUPERADMIN)
+  @UseGuards(JwtAuthGaurd, UserTypeGuard)
   async findAll() {
     console.log('Show the result. Now Got the all rese..................');
     return this.srmainService.findAll();

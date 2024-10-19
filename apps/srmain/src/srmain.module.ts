@@ -9,6 +9,7 @@ import {
   PAYMENTS_PACKAGE_NAME,
   AUTH_SERVICE_NAME,
   PAYMENTS_SERVICE_NAME,
+  UserTypeContorl,
 } from '@app/common';
 import { SrmainRepository } from './srmain.repository';
 import { SrmainDocument, SrmainSchema } from './models/srmain.schema';
@@ -55,6 +56,6 @@ import { join } from 'path';
     HealthModule,
   ],
   controllers: [SrmainController],
-  providers: [SrmainService, SrmainRepository],
+  providers: [SrmainService, SrmainRepository, UserTypeContorl],
 })
 export class SrmainModule {}

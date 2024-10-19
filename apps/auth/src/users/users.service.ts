@@ -9,6 +9,7 @@ import { UsersCreateDto } from './dto/users-create-dto';
 import * as bcrypt from 'bcryptjs';
 import { CurrentUserDto } from '@app/common';
 import { UserLevels, UserTypes } from './user.types';
+import { UsersUpdateDto } from './dto/users-update-dto';
 
 @Injectable()
 export class UsersService {
@@ -40,9 +41,9 @@ export class UsersService {
       // Inherit parent's ancestor_ids and add parent's ID
       ancestorIds = [...loggedInUser.ancestor_ids, loggedInUser._id.toString()];
     }
-    const toSaveUserType = usersCreateDto.u_type;
-    const loggedInUserType = loggedInUser?.u_type
-      ? loggedInUser.u_type
+    const toSaveUserType = usersCreateDto.uType;
+    const loggedInUserType = loggedInUser?.uType
+      ? loggedInUser.uType
       : UserTypes.ENDUSER;
     const userTypeLevels = new UserLevels();
     //if enduser or similar level account then, accountId will be loggedInUser's accountId else createdUsers's _id
@@ -77,6 +78,22 @@ export class UsersService {
     return createdUser;
   }
 
+  async updateUser(
+    userDto: UsersUpdateDto,
+    loggedInUser: CurrentUserDto,
+  ): Promise<UsersDocument> {
+    await this.updateUserValidateDto(userDto.email, loggedInUser.email);
+
+    let updatedUser = await this.usersRepository.findOneAndUpdate(
+      { _id: loggedInUser.userId },
+      {
+        ...userDto,
+      },
+    );
+
+    return updatedUser;
+  }
+
   private async createUserValidateDto(email: string) {
     try {
       const user = await this.usersRepository.findOne({ email });
@@ -84,6 +101,32 @@ export class UsersService {
       return;
     }
     throw new UnprocessableEntityException('Email does alreay exist');
+  }
+
+  private async updateUserValidateDto(
+    dtoEmail: string,
+    loggedInUserEmail: string,
+  ) {
+    try {
+      const user = await this.usersRepository.findOne({
+        $and: [
+          { email: dtoEmail }, // Check for the dtoEmail
+          { email: { $ne: loggedInUserEmail } }, // Exclude logged-in user's email
+        ],
+      });
+
+      if (user) {
+        throw new UnprocessableEntityException('Email already exists');
+      }
+    } catch (e) {
+      if (e.status === 404) {
+        return true;
+      }
+      throw new UnprocessableEntityException(
+        'An error occurred while validating the email',
+        e,
+      );
+    }
   }
 
   async getUser(userObj) {
@@ -104,7 +147,7 @@ export class UsersService {
       const userVal: CurrentUserDto = {
         userId: user._id.toHexString(),
         email: user.email,
-        u_type: user?.u_type,
+        uType: user?.uType,
         accountId: user?.accountId,
       };
       return userVal;

@@ -13,4 +13,6 @@ message AuthenticationMessage{
 message UserMessage{
     string userId = 1;
     string email = 2;
+    string uType = 3;
+    string accountId = 4;
 }

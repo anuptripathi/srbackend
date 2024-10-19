@@ -27,8 +27,8 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
 
   async validate(tokenPayload: CurrentUserDto) {
     try {
-      //console.log(tokenPayload);
-      //return await this.userService.getUser({ _id: userId });
+      //console.log('tokenPayloadtokenPayloadtokenPayload', tokenPayload);
+      //return await this.userService.getUser({ _id: tokenPayload.userId });
       return tokenPayload;
     } catch (e) {
       throw new UnauthorizedException('Invalid user');

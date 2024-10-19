@@ -1,6 +1,6 @@
 export interface CurrentUserDto {
   userId: string;
   email: string;
-  u_type: string;
+  uType: string;
   accountId: string; // top parent (kind of main account owner)
 }

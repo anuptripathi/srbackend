@@ -22,5 +22,5 @@ export class UsersCreateDto {
   @IsString()
   @IsNotEmpty()
   @IsEnum(UserTypes, { message: 'Invalid user type' })
-  u_type: UserTypes;
+  uType: UserTypes;
 }

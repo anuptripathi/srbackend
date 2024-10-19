@@ -14,7 +14,7 @@ export class AuthService {
     const tokenPayload: CurrentUserDto = {
       userId: user.userId.toString(),
       email: user.email,
-      u_type: user?.u_type,
+      uType: user?.uType,
       accountId: user?.accountId,
     };
     const expires = new Date();

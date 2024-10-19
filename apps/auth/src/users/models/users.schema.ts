@@ -19,7 +19,7 @@ export class UsersDocument extends AbstractDocument {
   ancestor_ids?: string[];
 
   @Prop({ required: true })
-  u_type: string; // user type, like superadmin, partner, admin etc.
+  uType: string; // user type, like superadmin, partner, admin etc.
 
   @Prop()
   accountId?: string;
