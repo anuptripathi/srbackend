@@ -21,7 +21,7 @@ import {
 } from '@app/common';
 
 @Controller('permissions')
-@RequiredUserType(UserTypes.ADMIN)
+@RequiredUserType(UserTypes.SUPERADMIN)
 @UseGuards(JwtAuthGaurd, UserTypeGuard)
 export class PermissionsController {
   constructor(private readonly permissionsService: PermissionsService) {}
