@@ -48,7 +48,7 @@ export class AuthController implements AuthServiceController {
     return { hasPermission };
   }
 
-  @UseGuards(JwtAuthGaurd)
+  //@UseGuards(JwtAuthGaurd)
   async getUserById(request: GetUserByIdRequest): Promise<any> {
     const userId = request.userId;
     console.log('getUserById', userId);
