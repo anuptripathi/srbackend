@@ -23,4 +23,8 @@ export class UsersCreateDto {
   @IsNotEmpty()
   @IsEnum(UserTypes, { message: 'Invalid user type' })
   uType: UserTypes;
+
+  @IsString()
+  @IsNotEmpty()
+  roleId: string;
 }

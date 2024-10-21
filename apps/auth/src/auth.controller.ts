@@ -9,12 +9,16 @@ import {
 } from '@app/common';
 import { Response } from 'express';
 import { JwtAuthGaurd } from './guards/jwt-auth.gaurd';
-import { MessagePattern, Payload } from '@nestjs/microservices';
+import { Payload } from '@nestjs/microservices';
+import { RolesService } from './roles/roles.service';
 
 @Controller()
 @AuthServiceControllerMethods()
 export class AuthController implements AuthServiceController {
-  constructor(private readonly authService: AuthService) {}
+  constructor(
+    private readonly authService: AuthService,
+    private readonly rolesService: RolesService,
+  ) {}
 
   @UseGuards(LocalAuthGaurd)
   @Post('login')
@@ -30,5 +34,18 @@ export class AuthController implements AuthServiceController {
   async authenticate(@Payload() data: any) {
     console.log('authenticated with data on AuthController', data?.user);
     return { ...data.user };
+  }
+
+  //@UseGuards(JwtAuthGaurd)
+  async checkPermissions(data: any) {
+    const { roleId, subject, actions } = data;
+    console.log(data);
+    const hasPermission = await this.rolesService.checkCapability(
+      roleId,
+      subject,
+      actions,
+    );
+    // Return response in the expected format
+    return { hasPermission };
   }
 }

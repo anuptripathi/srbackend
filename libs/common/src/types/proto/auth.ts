@@ -19,21 +19,38 @@ export interface UserMessage {
   email: string;
   uType: string;
   accountId: string;
+  roleId: string;
+}
+
+export interface CheckPermissionsRequest {
+  roleId: string;
+  subject: string;
+  actions: string[];
+}
+
+export interface CheckPermissionsResponse {
+  hasPermission: boolean;
 }
 
 export const AUTH_PACKAGE_NAME = "auth";
 
 export interface AuthServiceClient {
   authenticate(request: AuthenticationMessage): Observable<UserMessage>;
+
+  checkPermissions(request: CheckPermissionsRequest): Observable<CheckPermissionsResponse>;
 }
 
 export interface AuthServiceController {
   authenticate(request: AuthenticationMessage): Promise<UserMessage> | Observable<UserMessage> | UserMessage;
+
+  checkPermissions(
+    request: CheckPermissionsRequest,
+  ): Promise<CheckPermissionsResponse> | Observable<CheckPermissionsResponse> | CheckPermissionsResponse;
 }
 
 export function AuthServiceControllerMethods() {
   return function (constructor: Function) {
-    const grpcMethods: string[] = ["authenticate"];
+    const grpcMethods: string[] = ["authenticate", "checkPermissions"];
     for (const method of grpcMethods) {
       const descriptor: any = Reflect.getOwnPropertyDescriptor(constructor.prototype, method);
       GrpcMethod("AuthService", method)(constructor.prototype[method], method, descriptor);

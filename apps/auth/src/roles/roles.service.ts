@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { CreateRoleDto } from './dto/create-role.dto';
 import { UpdateRoleDto } from './dto/update-role.dto';
 import { RolesRepository } from './roles.repository';
-import { CurrentUserDto } from '@app/common';
+import { Actions, CurrentUserDto } from '@app/common';
 
 @Injectable()
 export class RolesService {
@@ -32,5 +32,25 @@ export class RolesService {
 
   async remove(_id: string) {
     return this.rolesRepository.findOneAndDelete({ _id });
+  }
+
+  async checkCapability(
+    roleId: string,
+    subject: string,
+    actions: string[],
+  ): Promise<boolean> {
+    const role = await this.rolesRepository.findOne({ _id: roleId });
+    //console.log('role is', role);
+    if (!role) {
+      return false;
+    }
+
+    return role.permissions.some(
+      (permission) =>
+        permission.subject === subject &&
+        actions.every((action) =>
+          permission.actions.includes(action as Actions),
+        ),
+    );
   }
 }

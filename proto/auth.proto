@@ -3,7 +3,8 @@ syntax = "proto3";
 package auth;
 
 service AuthService {
-    rpc Authenticate (AuthenticationMessage) returns (UserMessage){}
+    rpc Authenticate (AuthenticationMessage) returns (UserMessage);
+    rpc CheckPermissions (CheckPermissionsRequest) returns (CheckPermissionsResponse);
 }
 
 message AuthenticationMessage{
@@ -15,4 +16,15 @@ message UserMessage{
     string email = 2;
     string uType = 3;
     string accountId = 4;
+    string roleId = 5;
 }
+
+message CheckPermissionsRequest {
+    string roleId = 1;
+    string subject = 2;
+    repeated string actions = 3;
+  }
+  
+  message CheckPermissionsResponse {
+    bool hasPermission = 1;
+  }

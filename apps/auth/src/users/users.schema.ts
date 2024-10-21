@@ -21,6 +21,9 @@ export class UsersDocument extends AbstractDocument {
   @Prop({ required: true })
   uType: string; // user type, like superadmin, partner, admin etc.
 
+  @Prop({ required: true })
+  roleId: string;
+
   @Prop()
   accountId?: string;
 }

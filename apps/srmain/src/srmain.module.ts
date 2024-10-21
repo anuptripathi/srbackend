@@ -8,14 +8,12 @@ import {
   UserTypeContorl,
 } from '@app/common';
 import { SrmainRepository } from './srmain.repository';
-import { SrmainDocument, SrmainSchema } from './models/srmain.schema';
+import { SrmainDocument, SrmainSchema } from './srmain.schema';
 import { ConfigModule } from '@nestjs/config';
 import {
   AuthGrpcClientsModule,
   PaymentGrpcClientsModule,
 } from '@app/common/grpc_clients';
-import { PermissionsModule } from './permissions/permissions.module';
-import { RolesModule } from './roles/roles.module';
 
 @Module({
   imports: [
@@ -30,8 +28,6 @@ import { RolesModule } from './roles/roles.module';
     AuthGrpcClientsModule,
     PaymentGrpcClientsModule,
     HealthModule,
-    PermissionsModule,
-    RolesModule,
   ],
   controllers: [SrmainController],
   providers: [SrmainService, SrmainRepository, UserTypeContorl],

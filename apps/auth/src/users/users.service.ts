@@ -4,7 +4,7 @@ import {
   UnprocessableEntityException,
 } from '@nestjs/common';
 import { UsersRepository } from './users.repository';
-import { UsersDocument } from './models/users.schema';
+import { UsersDocument } from './users.schema';
 import { UsersCreateDto } from './dto/users-create-dto';
 import * as bcrypt from 'bcryptjs';
 import { CurrentUserDto } from '@app/common';
@@ -57,7 +57,7 @@ export class UsersService {
     ) {
       newAccoutnId = true;
     } else {
-      throw new Error('The selection of the UserType (u_type) is not allowd');
+      throw new Error('The selection of the UserType (uType) is not allowd');
     }
 
     let createdUser = await this.usersRepository.create({
@@ -149,6 +149,7 @@ export class UsersService {
         email: user.email,
         uType: user?.uType,
         accountId: user?.accountId,
+        roleId: user?.roleId,
       };
       return userVal;
     }

@@ -18,14 +18,18 @@ import {
   JwtAuthGaurd,
   UserTypeGuard,
   UserTypes,
+  Subject,
+  CapabilityGuard,
+  RequiredCapability,
 } from '@app/common';
 
 @Controller('srmain')
+@Subject('User')
+@UseGuards(JwtAuthGaurd, UserTypeGuard, CapabilityGuard)
 export class SrmainController {
   constructor(private readonly srmainService: SrmainService) {}
 
   @Post()
-  @UseGuards(JwtAuthGaurd)
   async create(
     @Body() createSrmainDto: CreateSrmainDto,
     @CurrentUser() user: CurrentUserDto,
@@ -34,21 +38,19 @@ export class SrmainController {
   }
 
   @Get()
-  @RequiredUserType(UserTypes.PARTNER, UserTypes.SUPERADMIN)
-  @UseGuards(JwtAuthGaurd, UserTypeGuard)
+  @RequiredCapability('read')
+  @RequiredUserType(UserTypes.PARTNER, UserTypes.ADMIN)
   async findAll() {
     console.log('Show the result. Now Got the all rese..................');
     return this.srmainService.findAll();
   }
 
   @Get(':id')
-  @UseGuards(JwtAuthGaurd)
   async findOne(@Param('id') id: string) {
     return this.srmainService.findOne(id);
   }
 
   @Patch(':id')
-  @UseGuards(JwtAuthGaurd)
   async update(
     @Param('id') id: string,
     @Body() updateSrmainDto: UpdateSrmainDto,
@@ -57,7 +59,6 @@ export class SrmainController {
   }
 
   @Delete(':id')
-  @UseGuards(JwtAuthGaurd)
   async remove(@Param('id') id: string) {
     return this.srmainService.remove(id);
   }

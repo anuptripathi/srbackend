@@ -7,3 +7,4 @@ export * from './dtos';
 export * from './health';
 export * from './types';
 export * from './usertypes';
+export * from './capability';
