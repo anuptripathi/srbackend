@@ -1,9 +1,7 @@
 import { CanActivate, ExecutionContext, Injectable } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
 import { CurrentUserDto } from '@app/common';
-import { ROLES_KEY, SUBJECT_KEY } from '@app/common';
-import { ClientGrpc } from '@nestjs/microservices';
-import { lastValueFrom } from 'rxjs';
+import { CAPABILITY_KEY, SUBJECT_KEY } from '@app/common';
 import { RolesService } from '../roles/roles.service';
 
 @Injectable()
@@ -16,7 +14,7 @@ export class CapabilityGuard implements CanActivate {
   async canActivate(context: ExecutionContext): Promise<boolean> {
     // Extract required capabilities and subject using Reflector
     const requiredCapabilities = this.reflector.getAllAndOverride<string[]>(
-      ROLES_KEY,
+      CAPABILITY_KEY,
       [context.getHandler(), context.getClass()],
     );
     const subject = this.reflector.get<string>(SUBJECT_KEY, context.getClass());
