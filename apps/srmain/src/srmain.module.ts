@@ -5,17 +5,17 @@ import {
   DatabaseModule,
   LoggerModule,
   HealthModule,
-  AUTH_PACKAGE_NAME,
-  PAYMENTS_PACKAGE_NAME,
-  AUTH_SERVICE_NAME,
-  PAYMENTS_SERVICE_NAME,
   UserTypeContorl,
 } from '@app/common';
 import { SrmainRepository } from './srmain.repository';
 import { SrmainDocument, SrmainSchema } from './models/srmain.schema';
-import { ConfigModule, ConfigService } from '@nestjs/config';
-import { ClientsModule, Transport } from '@nestjs/microservices';
-import { join } from 'path';
+import { ConfigModule } from '@nestjs/config';
+import {
+  AuthGrpcClientsModule,
+  PaymentGrpcClientsModule,
+} from '@app/common/grpc_clients';
+import { PermissionsModule } from './permissions/permissions.module';
+import { RolesModule } from './roles/roles.module';
 
 @Module({
   imports: [
@@ -27,33 +27,11 @@ import { join } from 'path';
     ConfigModule.forRoot({
       isGlobal: true,
     }),
-    ClientsModule.registerAsync([
-      {
-        name: AUTH_SERVICE_NAME,
-        useFactory: (configService: ConfigService) => ({
-          transport: Transport.GRPC,
-          options: {
-            package: AUTH_PACKAGE_NAME,
-            protoPath: join(__dirname, '../../../proto/auth.proto'),
-            url: configService.getOrThrow('AUTH_GRPC_URL'),
-          },
-        }),
-        inject: [ConfigService],
-      },
-      {
-        name: PAYMENTS_SERVICE_NAME,
-        useFactory: (configService: ConfigService) => ({
-          transport: Transport.GRPC,
-          options: {
-            package: PAYMENTS_PACKAGE_NAME,
-            protoPath: join(__dirname, '../../../proto/payments.proto'),
-            url: configService.getOrThrow('PAYMENTS_GRPC_URL'),
-          },
-        }),
-        inject: [ConfigService],
-      },
-    ]),
+    AuthGrpcClientsModule,
+    PaymentGrpcClientsModule,
     HealthModule,
+    PermissionsModule,
+    RolesModule,
   ],
   controllers: [SrmainController],
   providers: [SrmainService, SrmainRepository, UserTypeContorl],
