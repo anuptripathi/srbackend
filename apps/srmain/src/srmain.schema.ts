@@ -1,7 +1,7 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { AbstractDocument } from '@app/common';
 
-@Schema({ versionKey: false })
+@Schema({ versionKey: false, timestamps: true })
 export class SrmainDocument extends AbstractDocument {
   @Prop()
   timestamp: Date;
@@ -11,9 +11,6 @@ export class SrmainDocument extends AbstractDocument {
 
   @Prop()
   endDate: Date;
-
-  @Prop()
-  userId: string;
 
   @Prop()
   invoiceId: string;

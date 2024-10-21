@@ -3,27 +3,42 @@ import { CreateSrmainDto } from './dto/create-srmain.dto';
 import { UpdateSrmainDto } from './dto/update-srmain.dto';
 import { SrmainRepository } from './srmain.repository';
 import {
+  AUTH_SERVICE_NAME,
+  AuthServiceClient,
   CurrentUserDto,
   PAYMENTS_SERVICE_NAME,
   PaymentsServiceClient,
 } from '@app/common';
 import { ClientGrpc } from '@nestjs/microservices';
-import { map } from 'rxjs';
+import { lastValueFrom, map } from 'rxjs';
 
 @Injectable()
 export class SrmainService implements OnModuleInit {
   private paymentService: PaymentsServiceClient;
+  private authService: AuthServiceClient;
   constructor(
     private readonly srmainRepository: SrmainRepository,
     @Inject(PAYMENTS_SERVICE_NAME) private readonly paymentClient: ClientGrpc,
+    @Inject(AUTH_SERVICE_NAME) private readonly authClient: ClientGrpc,
   ) {}
 
   onModuleInit() {
     this.paymentService = this.paymentClient.getService<PaymentsServiceClient>(
       PAYMENTS_SERVICE_NAME,
     );
+    this.authService =
+      this.authClient.getService<AuthServiceClient>(AUTH_SERVICE_NAME);
   }
   async create(createSrmainDto: CreateSrmainDto, user: CurrentUserDto) {
+    const getUserRequest = { userId: user.userId };
+
+    const userResponse = await lastValueFrom(
+      this.authService
+        .getUserById(getUserRequest)
+        .pipe(map((response) => response.userObj)),
+    );
+    console.log('userResponse', userResponse);
+
     return this.paymentService
       .createCharge({
         ...createSrmainDto.charge,
@@ -35,7 +50,9 @@ export class SrmainService implements OnModuleInit {
             ...createSrmainDto,
             timestamp: new Date(),
             invoiceId: res.id,
-            userId: user.userId,
+            ownerId: user.userId,
+            addedBy: user.userId,
+            ancestorIds: userResponse.ancestorIds,
           });
         }),
       );

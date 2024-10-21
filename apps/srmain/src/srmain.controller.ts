@@ -27,6 +27,7 @@ import {
 
 @Controller('srmain')
 @Subject(Subjects.ROLES)
+@RequiredUserType(UserTypes.PARTNER, UserTypes.ADMIN)
 @UseGuards(JwtAuthGaurd, UserTypeGuard, CapabilityGuard)
 export class SrmainController {
   constructor(private readonly srmainService: SrmainService) {}
@@ -41,7 +42,6 @@ export class SrmainController {
 
   @Get()
   @RequiredCapability(Actions.READ)
-  @RequiredUserType(UserTypes.PARTNER, UserTypes.ADMIN)
   async findAll() {
     console.log('Show the result. Now Got the all rese..................');
     return this.srmainService.findAll();

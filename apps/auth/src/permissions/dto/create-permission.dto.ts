@@ -14,5 +14,5 @@ export class CreatePermissionDto {
   actions: Actions[];
 
   @IsEnum(UserTypes)
-  userType: UserTypes;
+  uType: UserTypes;
 }

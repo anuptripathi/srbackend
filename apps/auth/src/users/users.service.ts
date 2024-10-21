@@ -34,12 +34,12 @@ export class UsersService {
       throw new Error('Parent not found');
     }
 
-    if (!Array.isArray(loggedInUser.ancestor_ids)) {
+    if (!Array.isArray(loggedInUser.ancestorIds)) {
       // throw new Error('parent.ancestor_ids is not an array'); // Ensure it's an array
       ancestorIds = [loggedInUser._id.toString()];
     } else {
       // Inherit parent's ancestor_ids and add parent's ID
-      ancestorIds = [...loggedInUser.ancestor_ids, loggedInUser._id.toString()];
+      ancestorIds = [...loggedInUser.ancestorIds, loggedInUser._id.toString()];
     }
     const toSaveUserType = usersCreateDto.uType;
     const loggedInUserType = loggedInUser?.uType
@@ -63,9 +63,9 @@ export class UsersService {
     let createdUser = await this.usersRepository.create({
       ...usersCreateDto,
       password: await bcrypt.hash(usersCreateDto.password, 10),
-      parent_id: loggedInUserId || null, // ie owner_id
-      added_by: loggedInUserId || null, // this can be different from parent_id, in case if someone else on behalf of the parent_id/owner_id adds/edits the record
-      ancestor_ids: ancestorIds,
+      ownerId: loggedInUserId || null, // ie parentId
+      addedBy: loggedInUserId || null, // this can be different from ownerId, in case if someone else on behalf of the ownerId/parentId adds/edits the record
+      ancestorIds: ancestorIds,
       accountId,
     });
 
@@ -138,6 +138,15 @@ export class UsersService {
     }
   }
 
+  async getUserById(userId: string) {
+    try {
+      const user = await this.usersRepository.findOne({ _id: userId });
+      return user;
+    } catch (e) {
+      throw new UnprocessableEntityException('User does alreay exist');
+    }
+  }
+
   async verifyUser(email: string, password: string) {
     const user = await this.usersRepository.findOne({ email });
     const passwordIsValid = bcrypt.compare(password, user.password);
@@ -166,10 +175,7 @@ export class UsersService {
 
     // Fetch the user and update their ancestor_ids
     const user = await this.usersRepository.findById(userId);
-    const newAncestorIds = [
-      ...newParent.ancestor_ids,
-      newParent._id.toString(),
-    ];
+    const newAncestorIds = [...newParent.ancestorIds, newParent._id.toString()];
     await this.usersRepository.findOneAndUpdate(
       { _id: userId },
       { ancestor_ids: newAncestorIds },
@@ -180,7 +186,7 @@ export class UsersService {
 
     // Update products owned by the user
     await this.usersRepository.findManyAndUpdate(
-      { parent_id: userId },
+      { ownerId: userId },
       { ancestor_ids: newAncestorIds },
     );
   }
@@ -191,7 +197,7 @@ export class UsersService {
     newAncestorIds: string[],
   ): Promise<void> {
     const descendants = await this.usersRepository.find({
-      ancestor_ids: userId,
+      ancestorIds: userId,
     });
     for (const descendant of descendants) {
       const updatedAncestorIds = [...newAncestorIds, descendant._id.toString()];

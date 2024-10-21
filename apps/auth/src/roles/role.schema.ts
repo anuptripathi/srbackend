@@ -24,9 +24,6 @@ export class RoleDocument extends AbstractDocument {
     subject: Subjects;
     actions: Actions[];
   }[];
-
-  @Prop()
-  addedBy: string;
 }
 
 export const RoleSchema = SchemaFactory.createForClass(RoleDocument);

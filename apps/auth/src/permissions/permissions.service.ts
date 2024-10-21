@@ -12,6 +12,8 @@ export class PermissionsService {
     return this.permissionsRepository.create({
       ...createPermissionDto,
       addedBy: user.userId,
+      ownerId: user.userId,
+      ancestorIds: [],
     });
   }
 

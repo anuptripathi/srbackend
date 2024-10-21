@@ -3,15 +3,16 @@ syntax = "proto3";
 package auth;
 
 service AuthService {
-    rpc Authenticate (AuthenticationMessage) returns (UserMessage);
+    rpc Authenticate (AuthenticationMessage) returns (CurrentUserMessage);
     rpc CheckPermissions (CheckPermissionsRequest) returns (CheckPermissionsResponse);
+    rpc GetUserById (GetUserByIdRequest) returns (GetUserByIdResponse);
 }
 
 message AuthenticationMessage{
     string Authentication = 1;
 }
 
-message UserMessage{
+message CurrentUserMessage{
     string userId = 1;
     string email = 2;
     string uType = 3;
@@ -24,7 +25,26 @@ message CheckPermissionsRequest {
     string subject = 2;
     repeated string actions = 3;
   }
-  
-  message CheckPermissionsResponse {
+
+message CheckPermissionsResponse {
     bool hasPermission = 1;
   }
+
+message GetUserByIdRequest {
+    string userId = 1;
+  }
+  
+message UserMessage {
+    string userId = 1;
+    string email = 2;
+    string uType = 3; // user type, like superadmin, partner, admin etc.
+    string roleId = 4;
+    string accountId = 5;
+    string ownerId = 6;
+    string addedBy = 7;
+    repeated string ancestorIds = 8; // Ensure it's defined as an array
+  }
+  
+message GetUserByIdResponse {
+    UserMessage userObj = 1;
+}

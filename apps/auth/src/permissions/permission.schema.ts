@@ -13,10 +13,7 @@ export class PermissionDocument extends AbstractDocument {
   actions: Actions[];
 
   @Prop({ type: String, enum: UserTypes })
-  userType: UserTypes;
-
-  @Prop()
-  addedBy: string;
+  uType: UserTypes;
 }
 
 export const PermissionSchema =
