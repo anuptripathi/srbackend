@@ -34,13 +34,17 @@ export class RolesService {
     return this.rolesRepository.findOneAndDelete({ _id });
   }
 
-  async checkCapability(
-    roleId: string,
-    subject: string,
-    actions: string[],
-  ): Promise<boolean> {
+  async checkCapability(payload: any): Promise<boolean> {
+    const { roleId, subject, actions } = payload;
     const role = await this.rolesRepository.findOne({ _id: roleId });
-    //console.log('role is', role);
+    console.log(
+      'required role is',
+      roleId,
+      subject,
+      actions,
+      ' saved is',
+      role,
+    );
     if (!role) {
       return false;
     }

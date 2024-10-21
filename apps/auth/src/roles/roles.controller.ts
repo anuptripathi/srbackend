@@ -18,11 +18,17 @@ import {
   JwtAuthGaurd,
   UserTypeGuard,
   UserTypes,
+  Subject,
+  RequiredCapability,
 } from '@app/common';
+// in auth app, call this gaurd form capability guard,
+//but in other app/microceservies call it from @app/common.
+import { CapabilityGuard } from '../guards/capability.guard';
 
 @Controller('roles')
+@Subject('Users')
 @RequiredUserType(UserTypes.ADMIN)
-@UseGuards(JwtAuthGaurd, UserTypeGuard)
+@UseGuards(JwtAuthGaurd, UserTypeGuard, CapabilityGuard)
 export class RolesController {
   constructor(private readonly rolesService: RolesService) {}
 
@@ -35,6 +41,7 @@ export class RolesController {
   }
 
   @Get()
+  @RequiredCapability('view')
   async findAll() {
     return this.rolesService.findAll();
   }

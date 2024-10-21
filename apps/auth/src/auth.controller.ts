@@ -38,13 +38,8 @@ export class AuthController implements AuthServiceController {
 
   //@UseGuards(JwtAuthGaurd)
   async checkPermissions(data: any) {
-    const { roleId, subject, actions } = data;
     console.log(data);
-    const hasPermission = await this.rolesService.checkCapability(
-      roleId,
-      subject,
-      actions,
-    );
+    const hasPermission = await this.rolesService.checkCapability(data);
     // Return response in the expected format
     return { hasPermission };
   }
