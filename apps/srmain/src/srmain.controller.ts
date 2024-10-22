@@ -27,12 +27,15 @@ import {
 
 @Controller(Subjects.PRODUCTS)
 @Subject(Subjects.PRODUCTS)
-@RequiredUserType(UserTypes.PARTNER, UserTypes.ADMIN)
+@RequiredUserType(UserTypes.ENDUSER)
+@RequiredCapability(Actions.READ)
 @UseGuards(JwtAuthGaurd, UserTypeGuard, CapabilityGuard)
 export class SrmainController {
   constructor(private readonly srmainService: SrmainService) {}
 
   @Post()
+  @RequiredUserType(UserTypes.ADMIN)
+  @RequiredCapability(Actions.ADD)
   async create(
     @Body() createSrmainDto: CreateSrmainDto,
     @CurrentUser() user: CurrentUserDto,
@@ -40,8 +43,7 @@ export class SrmainController {
     return this.srmainService.create(createSrmainDto, user);
   }
 
-  @Get()
-  @RequiredCapability(Actions.READ)
+  @Get() // capabililty already applied on top
   async findAll() {
     console.log('Show the result. Now Got the all rese..................');
     return this.srmainService.findAll();
@@ -53,6 +55,8 @@ export class SrmainController {
   }
 
   @Patch(':id')
+  @RequiredUserType(UserTypes.ADMIN)
+  @RequiredCapability(Actions.EDIT)
   async update(
     @Param('id') id: string,
     @Body() updateSrmainDto: UpdateSrmainDto,
@@ -61,6 +65,8 @@ export class SrmainController {
   }
 
   @Delete(':id')
+  @RequiredUserType(UserTypes.ADMIN)
+  @RequiredCapability(Actions.DELETE)
   async remove(@Param('id') id: string) {
     return this.srmainService.remove(id);
   }

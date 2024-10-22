@@ -30,11 +30,13 @@ import { CapabilityGuard } from '../guards/capability.guard';
 @Controller(Subjects.ROLES)
 @Subject(Subjects.ROLES)
 @RequiredUserType(UserTypes.ADMIN)
+@RequiredCapability(Actions.READ)
 @UseGuards(JwtAuthGaurd, UserTypeGuard, CapabilityGuard)
 export class RolesController {
   constructor(private readonly rolesService: RolesService) {}
 
   @Post()
+  @RequiredCapability(Actions.ADD)
   async create(
     @Body() createRoleDto: CreateRoleDto,
     @CurrentUser() user: CurrentUserDto,
@@ -54,11 +56,13 @@ export class RolesController {
   }
 
   @Patch(':id')
+  @RequiredCapability(Actions.EDIT)
   async update(@Param('id') id: string, @Body() updateRoleDto: UpdateRoleDto) {
     return this.rolesService.update(id, updateRoleDto);
   }
 
   @Delete(':id')
+  @RequiredCapability(Actions.DELETE)
   async remove(@Param('id') id: string) {
     return this.rolesService.remove(id);
   }

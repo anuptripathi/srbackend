@@ -20,16 +20,21 @@ import {
   UserTypes,
   Subjects,
   Subject,
+  RequiredCapability,
+  Actions,
 } from '@app/common';
+import { CapabilityGuard } from '../guards/capability.guard';
 
 @Controller(Subjects.PERMISSIONS)
 @Subject(Subjects.PERMISSIONS)
 @RequiredUserType(UserTypes.SUPERADMIN)
-@UseGuards(JwtAuthGaurd, UserTypeGuard)
+@RequiredCapability(Actions.READ)
+@UseGuards(JwtAuthGaurd, UserTypeGuard, CapabilityGuard)
 export class PermissionsController {
   constructor(private readonly permissionsService: PermissionsService) {}
 
   @Post()
+  @RequiredCapability(Actions.ADD)
   async create(
     @Body() createPermissionDto: CreatePermissionDto,
     @CurrentUser() user: CurrentUserDto,
@@ -48,6 +53,7 @@ export class PermissionsController {
   }
 
   @Patch(':id')
+  @RequiredCapability(Actions.EDIT)
   async update(
     @Param('id') id: string,
     @Body() updatePermissionDto: UpdatePermissionDto,
@@ -56,6 +62,7 @@ export class PermissionsController {
   }
 
   @Delete(':id')
+  @RequiredCapability(Actions.DELETE)
   async remove(@Param('id') id: string) {
     return this.permissionsService.remove(id);
   }

@@ -16,12 +16,15 @@ export abstract class AbstractRepository<TDocument extends AbstractDocument> {
     return (await createdDocument.save()).toJSON() as unknown as TDocument;
   }
 
-  async findOne(filterQuery: FilterQuery<TDocument>): Promise<TDocument> {
+  async findOne(
+    filterQuery: FilterQuery<TDocument>,
+    throwErr = true,
+  ): Promise<TDocument> {
     const document = await this.model
       .findOne(filterQuery)
       .lean<TDocument>(true);
 
-    if (!document) {
+    if (!document && throwErr) {
       this.logger.warn('Document was not found with filterQuery', filterQuery);
       throw new NotFoundException('Document was not found');
     }
@@ -29,10 +32,10 @@ export abstract class AbstractRepository<TDocument extends AbstractDocument> {
     return document;
   }
 
-  async findById(_id: string): Promise<TDocument> {
+  async findById(_id: string, throwErr = true): Promise<TDocument> {
     const document = await this.model.findById(_id).lean<TDocument>(true);
 
-    if (!document) {
+    if (!document && throwErr) {
       this.logger.warn('Document was not found with the id', _id);
       throw new NotFoundException('Document was not found');
     }
@@ -43,6 +46,7 @@ export abstract class AbstractRepository<TDocument extends AbstractDocument> {
   async findOneAndUpdate(
     filterQuery: FilterQuery<TDocument>,
     update: UpdateQuery<TDocument>,
+    throwErr = true,
   ): Promise<TDocument> {
     const document = await this.model
       .findOneAndUpdate(filterQuery, update, {
@@ -50,7 +54,7 @@ export abstract class AbstractRepository<TDocument extends AbstractDocument> {
       })
       .lean<TDocument>(true);
 
-    if (!document) {
+    if (!document && throwErr) {
       this.logger.warn('Document was not found with filterQuery', filterQuery);
       throw new NotFoundException('Document was not found');
     }
@@ -61,6 +65,7 @@ export abstract class AbstractRepository<TDocument extends AbstractDocument> {
   async findManyAndUpdate(
     filterQuery: FilterQuery<TDocument>,
     update: UpdateQuery<TDocument>,
+    throwErr = true,
   ): Promise<TDocument> {
     const document = await this.model
       .updateMany(filterQuery, update, {
@@ -68,7 +73,7 @@ export abstract class AbstractRepository<TDocument extends AbstractDocument> {
       })
       .lean<TDocument>(true);
 
-    if (!document) {
+    if (!document && throwErr) {
       this.logger.warn('Document was not found with filterQuery', filterQuery);
       throw new NotFoundException('Document was not found');
     }

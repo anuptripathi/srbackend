@@ -1,16 +1,31 @@
 import { Body, Controller, Get, Patch, Post, UseGuards } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { UsersCreateDto } from './dto/users-create-dto';
-import { CurrentUser, CurrentUserDto, Subjects } from '@app/common';
+import {
+  Actions,
+  CurrentUser,
+  CurrentUserDto,
+  RequiredCapability,
+  RequiredUserType,
+  Subject,
+  Subjects,
+  UserTypeGuard,
+  UserTypes,
+} from '@app/common';
 import { JwtAuthGaurd } from '../guards/jwt-auth.gaurd';
 import { UsersUpdateDto } from './dto/users-update-dto';
+import { CapabilityGuard } from '../guards/capability.guard';
 
 @Controller(Subjects.USERS)
+@Subject(Subjects.USERS)
+@RequiredUserType(UserTypes.ADMIN)
+@RequiredCapability(Actions.READ)
+@UseGuards(JwtAuthGaurd, UserTypeGuard)
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 
   @Post()
-  @UseGuards(JwtAuthGaurd)
+  @RequiredCapability(Actions.ADD)
   async create(
     @Body() usersCreateDto: UsersCreateDto,
     @CurrentUser() user: CurrentUserDto,
@@ -19,7 +34,7 @@ export class UsersController {
   }
 
   @Patch()
-  @UseGuards(JwtAuthGaurd)
+  @RequiredCapability(Actions.EDIT)
   async update(
     @Body() updateUserDto: UsersUpdateDto,
     @CurrentUser() user: CurrentUserDto,
@@ -28,7 +43,6 @@ export class UsersController {
   }
 
   @Get()
-  @UseGuards(JwtAuthGaurd)
   getUser(@CurrentUser() user: CurrentUserDto) {
     return user;
   }
