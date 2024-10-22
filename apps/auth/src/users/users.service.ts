@@ -57,7 +57,18 @@ export class UsersService {
     ) {
       newAccoutnId = true;
     } else {
-      throw new Error('The selection of the UserType (uType) is not allowd');
+      throw new UnprocessableEntityException(
+        'The selection of the UserType (uType) is not allowd',
+      );
+    }
+
+    if (
+      loggedInUserType === UserTypes.PARTNER &&
+      userTypeLevels[toSaveUserType] >= userTypeLevels[UserTypes.PARTNER]
+    ) {
+      throw new UnprocessableEntityException(
+        'Partner cant create users greater than or equal to his/her level.',
+      );
     }
 
     let createdUser = await this.usersRepository.create({
