@@ -34,13 +34,12 @@ export class AuthController implements AuthServiceController {
     response.send(user);
   }
 
-  @UseGuards(JwtAuthGaurd)
+  @UseGuards(JwtAuthGaurd) // checks Authentication:jwt in the request, parse the jwt, and pass in Payload data.
   async authenticate(@Payload() data: any) {
     console.log('authenticated with data on AuthController', data?.user);
     return { ...data.user };
   }
 
-  @UseGuards(JwtAuthGaurd)
   async checkPermissions(data: any) {
     console.log(data);
     const hasPermission = await this.rolesService.checkCapability(data);
@@ -48,7 +47,6 @@ export class AuthController implements AuthServiceController {
     return { hasPermission };
   }
 
-  //@UseGuards(JwtAuthGaurd)
   async getUserById(request: GetUserByIdRequest): Promise<any> {
     const userId = request.userId;
     console.log('getUserById', userId);
