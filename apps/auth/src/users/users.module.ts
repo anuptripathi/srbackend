@@ -2,7 +2,7 @@ import { Module } from '@nestjs/common';
 import { UsersController } from './users.controller';
 import { UsersService } from './users.service';
 import { UsersDocument, UsersSchema } from './users.schema';
-import { DatabaseModule, LoggerModule, UserTypeContorl } from '@app/common';
+import { DatabaseModule, LoggerModule } from '@app/common';
 import { UsersRepository } from './users.repository';
 import { CapabilityModule } from '../capability/capability.module';
 
@@ -16,7 +16,7 @@ import { CapabilityModule } from '../capability/capability.module';
     CapabilityModule,
   ],
   controllers: [UsersController],
-  providers: [UsersService, UsersRepository, UserTypeContorl],
+  providers: [UsersService, UsersRepository],
   exports: [UsersService],
 })
 export class UsersModule {}

@@ -27,8 +27,7 @@ import { CapabilityGuard } from '../guards/capability.guard';
 
 @Controller(Subjects.PERMISSIONS)
 @Subject(Subjects.PERMISSIONS)
-@RequiredUserType(UserTypes.SUPERADMIN)
-@RequiredCapability(Actions.READ)
+@RequiredUserType(UserTypes.SUPERADMIN) // only super admin can create/view a new permissions from ui
 @UseGuards(JwtAuthGaurd, UserTypeGuard, CapabilityGuard)
 export class PermissionsController {
   constructor(private readonly permissionsService: PermissionsService) {}
@@ -43,11 +42,13 @@ export class PermissionsController {
   }
 
   @Get()
+  @RequiredCapability(Actions.READ)
   async findAll() {
     return this.permissionsService.findAll();
   }
 
   @Get(':id')
+  @RequiredCapability(Actions.READ)
   async findOne(@Param('id') id: string) {
     return this.permissionsService.findOne(id);
   }

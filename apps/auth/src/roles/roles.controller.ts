@@ -14,10 +14,7 @@ import { UpdateRoleDto } from './dto/update-role.dto';
 import {
   CurrentUser,
   CurrentUserDto,
-  RequiredUserType,
   JwtAuthGaurd,
-  UserTypeGuard,
-  UserTypes,
   Subject,
   RequiredCapability,
   Subjects,
@@ -29,9 +26,7 @@ import { CapabilityGuard } from '../guards/capability.guard';
 
 @Controller(Subjects.ROLES)
 @Subject(Subjects.ROLES)
-@RequiredUserType(UserTypes.ADMIN)
-@RequiredCapability(Actions.READ)
-@UseGuards(JwtAuthGaurd, UserTypeGuard, CapabilityGuard)
+@UseGuards(JwtAuthGaurd, CapabilityGuard)
 export class RolesController {
   constructor(private readonly rolesService: RolesService) {}
 
@@ -51,6 +46,7 @@ export class RolesController {
   }
 
   @Get(':id')
+  @RequiredCapability(Actions.READ)
   async findOne(@Param('id') id: string) {
     return this.rolesService.findOne(id);
   }

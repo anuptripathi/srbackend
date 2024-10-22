@@ -6,11 +6,8 @@ import {
   CurrentUser,
   CurrentUserDto,
   RequiredCapability,
-  RequiredUserType,
   Subject,
   Subjects,
-  UserTypeGuard,
-  UserTypes,
 } from '@app/common';
 import { JwtAuthGaurd } from '../guards/jwt-auth.gaurd';
 import { UsersUpdateDto } from './dto/users-update-dto';
@@ -18,9 +15,7 @@ import { CapabilityGuard } from '../guards/capability.guard';
 
 @Controller(Subjects.USERS)
 @Subject(Subjects.USERS)
-@RequiredUserType(UserTypes.ADMIN)
-@RequiredCapability(Actions.READ)
-@UseGuards(JwtAuthGaurd, UserTypeGuard, CapabilityGuard)
+@UseGuards(JwtAuthGaurd, CapabilityGuard)
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 
@@ -43,6 +38,7 @@ export class UsersController {
   }
 
   @Get()
+  @RequiredCapability(Actions.READ)
   getUser(@CurrentUser() user: CurrentUserDto) {
     return user;
   }

@@ -1,5 +1,5 @@
 import { Module } from '@nestjs/common';
-import { DatabaseModule, LoggerModule, UserTypeContorl } from '@app/common';
+import { DatabaseModule, LoggerModule } from '@app/common';
 import { RolesController } from './roles.controller';
 import { RolesService } from './roles.service';
 import { RolesRepository } from './roles.repository';
@@ -20,7 +20,7 @@ import { CapabilityModule } from '../capability/capability.module';
     CapabilityModule,
   ],
   controllers: [RolesController],
-  providers: [RolesService, RolesRepository, UserTypeContorl],
+  providers: [RolesService, RolesRepository],
   exports: [RolesService],
 })
 export class RolesModule {}

@@ -8,6 +8,7 @@ export class CapabilityService {
 
   async checkCapability(payload: any): Promise<boolean> {
     const { currentUser, subject, actions } = payload;
+    console.log(currentUser, subject, actions);
     if (!currentUser) {
       return false;
     }
@@ -19,6 +20,8 @@ export class CapabilityService {
         },
         false,
       );
+
+      console.log('rolerolerolerole', role);
 
       if (!role && currentUser.uType === UserTypes.SUPERADMIN) {
         return true;

@@ -14,10 +14,7 @@ import { UpdateSrmainDto } from './dto/update-srmain.dto';
 import {
   CurrentUser,
   CurrentUserDto,
-  RequiredUserType,
   JwtAuthGaurd,
-  UserTypeGuard,
-  UserTypes,
   Subject,
   CapabilityGuard,
   RequiredCapability,
@@ -27,14 +24,11 @@ import {
 
 @Controller(Subjects.PRODUCTS)
 @Subject(Subjects.PRODUCTS)
-@RequiredUserType(UserTypes.ENDUSER)
-@RequiredCapability(Actions.READ)
-@UseGuards(JwtAuthGaurd, UserTypeGuard, CapabilityGuard)
+@UseGuards(JwtAuthGaurd, CapabilityGuard)
 export class SrmainController {
   constructor(private readonly srmainService: SrmainService) {}
 
   @Post()
-  @RequiredUserType(UserTypes.ADMIN)
   @RequiredCapability(Actions.ADD)
   async create(
     @Body() createSrmainDto: CreateSrmainDto,
@@ -43,19 +37,20 @@ export class SrmainController {
     return this.srmainService.create(createSrmainDto, user);
   }
 
-  @Get() // capabililty already applied on top
+  @Get()
+  @RequiredCapability(Actions.READ)
   async findAll() {
     console.log('Show the result. Now Got the all rese..................');
     return this.srmainService.findAll();
   }
 
   @Get(':id')
+  @RequiredCapability(Actions.READ)
   async findOne(@Param('id') id: string) {
     return this.srmainService.findOne(id);
   }
 
   @Patch(':id')
-  @RequiredUserType(UserTypes.ADMIN)
   @RequiredCapability(Actions.EDIT)
   async update(
     @Param('id') id: string,
@@ -65,7 +60,6 @@ export class SrmainController {
   }
 
   @Delete(':id')
-  @RequiredUserType(UserTypes.ADMIN)
   @RequiredCapability(Actions.DELETE)
   async remove(@Param('id') id: string) {
     return this.srmainService.remove(id);
