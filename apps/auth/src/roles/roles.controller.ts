@@ -27,8 +27,8 @@ import {
 //but in other app/microceservies call it from @app/common.
 import { CapabilityGuard } from '../guards/capability.guard';
 
-@Controller('roles')
-@Subject(Subjects.USERS)
+@Controller(Subjects.ROLES)
+@Subject(Subjects.ROLES)
 @RequiredUserType(UserTypes.ADMIN)
 @UseGuards(JwtAuthGaurd, UserTypeGuard, CapabilityGuard)
 export class RolesController {

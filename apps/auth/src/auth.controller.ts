@@ -4,6 +4,7 @@ import { LocalAuthGaurd } from './guards/local-auth.gaurd';
 import {
   AuthServiceController,
   AuthServiceControllerMethods,
+  CheckPermissionsRequest,
   CurrentUser,
   CurrentUserDto,
   GetUserByIdRequest,
@@ -40,7 +41,7 @@ export class AuthController implements AuthServiceController {
     return { ...data.user };
   }
 
-  async checkPermissions(data: any) {
+  async checkPermissions(data: CheckPermissionsRequest) {
     console.log(data);
     const hasPermission = await this.rolesService.checkCapability(data);
     // Return response in the expected format

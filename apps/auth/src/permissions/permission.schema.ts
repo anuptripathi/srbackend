@@ -1,7 +1,11 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { AbstractDocument, UserTypes, Actions, Subjects } from '@app/common';
 
-@Schema({ timestamps: true, versionKey: false })
+@Schema({
+  collection: Subjects.PERMISSIONS,
+  timestamps: true,
+  versionKey: false,
+})
 export class PermissionDocument extends AbstractDocument {
   @Prop()
   title: string;

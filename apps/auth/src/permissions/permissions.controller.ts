@@ -18,9 +18,12 @@ import {
   JwtAuthGaurd,
   UserTypeGuard,
   UserTypes,
+  Subjects,
+  Subject,
 } from '@app/common';
 
-@Controller('permissions')
+@Controller(Subjects.PERMISSIONS)
+@Subject(Subjects.PERMISSIONS)
 @RequiredUserType(UserTypes.SUPERADMIN)
 @UseGuards(JwtAuthGaurd, UserTypeGuard)
 export class PermissionsController {

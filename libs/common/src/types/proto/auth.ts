@@ -23,7 +23,7 @@ export interface CurrentUserMessage {
 }
 
 export interface CheckPermissionsRequest {
-  roleId: string;
+  currentUser: CurrentUserMessage | undefined;
   subject: string;
   actions: string[];
 }

@@ -1,11 +1,11 @@
 import { Body, Controller, Get, Patch, Post, UseGuards } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { UsersCreateDto } from './dto/users-create-dto';
-import { CurrentUser, CurrentUserDto } from '@app/common';
+import { CurrentUser, CurrentUserDto, Subjects } from '@app/common';
 import { JwtAuthGaurd } from '../guards/jwt-auth.gaurd';
 import { UsersUpdateDto } from './dto/users-update-dto';
 
-@Controller('users')
+@Controller(Subjects.USERS)
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 

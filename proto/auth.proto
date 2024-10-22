@@ -21,7 +21,7 @@ message CurrentUserMessage{
 }
 
 message CheckPermissionsRequest {
-    string roleId = 1;
+    CurrentUserMessage currentUser = 1;
     string subject = 2;
     repeated string actions = 3;
   }

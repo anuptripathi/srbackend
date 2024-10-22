@@ -31,7 +31,7 @@ export class CapabilityGuard implements CanActivate {
     try {
       // Make a gRPC request to auth service to check if the user has the necessary permissions
       const hasPermission = await this.rolesService.checkCapability({
-        roleId: user.roleId,
+        currentUser: user,
         subject: subject,
         actions: requiredCapabilities,
       });

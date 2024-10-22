@@ -25,8 +25,8 @@ import {
   Actions,
 } from '@app/common';
 
-@Controller('srmain')
-@Subject(Subjects.ROLES)
+@Controller(Subjects.PRODUCTS)
+@Subject(Subjects.PRODUCTS)
 @RequiredUserType(UserTypes.PARTNER, UserTypes.ADMIN)
 @UseGuards(JwtAuthGaurd, UserTypeGuard, CapabilityGuard)
 export class SrmainController {

@@ -2,7 +2,7 @@ import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { AbstractDocument } from '@app/common';
 import { Actions, Subjects } from '@app/common';
 
-@Schema({ timestamps: true, versionKey: false })
+@Schema({ collection: Subjects.ROLES, timestamps: true, versionKey: false })
 export class RoleDocument extends AbstractDocument {
   @Prop({ maxlength: 100 })
   name: string;

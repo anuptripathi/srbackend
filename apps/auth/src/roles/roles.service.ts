@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { CreateRoleDto } from './dto/create-role.dto';
 import { UpdateRoleDto } from './dto/update-role.dto';
 import { RolesRepository } from './roles.repository';
-import { Actions, CurrentUserDto } from '@app/common';
+import { Actions, CurrentUserDto, UserTypes } from '@app/common';
 import { UsersService } from '../users/users.service';
 
 @Injectable()
@@ -42,16 +42,20 @@ export class RolesService {
   }
 
   async checkCapability(payload: any): Promise<boolean> {
-    const { roleId, subject, actions } = payload;
-    const role = await this.rolesRepository.findOne({ _id: roleId });
-    console.log(
-      'required role is',
-      roleId,
-      subject,
-      actions,
-      ' saved is',
-      role,
-    );
+    const { currentUser, subject, actions } = payload;
+    console.log('currentUser', currentUser);
+    console.log('subject', subject);
+    console.log('actions', actions);
+    if (!currentUser) {
+      return false;
+    }
+    if (currentUser.uType === UserTypes.SUPERADMIN) {
+      return true;
+    }
+    const role = await this.rolesRepository.findOne({
+      _id: currentUser.roleId,
+    });
+
     if (!role) {
       return false;
     }
