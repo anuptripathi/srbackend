@@ -13,15 +13,15 @@ import {
 import { Response } from 'express';
 import { JwtAuthGaurd } from './guards/jwt-auth.gaurd';
 import { Payload } from '@nestjs/microservices';
-import { RolesService } from './roles/roles.service';
 import { UsersService } from './users/users.service';
+import { CapabilityService } from './capability/capability.service';
 
 @Controller()
 @AuthServiceControllerMethods()
 export class AuthController implements AuthServiceController {
   constructor(
     private readonly authService: AuthService,
-    private readonly rolesService: RolesService,
+    private readonly capabilityService: CapabilityService,
     private readonly userService: UsersService,
   ) {}
 
@@ -43,7 +43,7 @@ export class AuthController implements AuthServiceController {
 
   async checkPermissions(data: CheckPermissionsRequest) {
     console.log(data);
-    const hasPermission = await this.rolesService.checkCapability(data);
+    const hasPermission = await this.capabilityService.checkCapability(data);
     // Return response in the expected format
     return { hasPermission };
   }

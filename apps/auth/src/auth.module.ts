@@ -9,6 +9,7 @@ import { LocalStrategy } from './strategies/local.strategy';
 import { JwtStrategy } from './strategies/jwt.strategy';
 import { PermissionsModule } from './permissions/permissions.module';
 import { RolesModule } from './roles/roles.module';
+import { CapabilityModule } from './capability/capability.module';
 
 @Module({
   imports: [
@@ -29,6 +30,7 @@ import { RolesModule } from './roles/roles.module';
     HealthModule,
     PermissionsModule,
     RolesModule,
+    CapabilityModule,
   ],
   controllers: [AuthController],
   providers: [AuthService, LocalStrategy, JwtStrategy],

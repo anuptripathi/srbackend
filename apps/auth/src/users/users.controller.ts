@@ -20,7 +20,7 @@ import { CapabilityGuard } from '../guards/capability.guard';
 @Subject(Subjects.USERS)
 @RequiredUserType(UserTypes.ADMIN)
 @RequiredCapability(Actions.READ)
-@UseGuards(JwtAuthGaurd, UserTypeGuard)
+@UseGuards(JwtAuthGaurd, UserTypeGuard, CapabilityGuard)
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 

@@ -6,6 +6,7 @@ import { RolesRepository } from './roles.repository';
 import { RoleDocument, RoleSchema } from './role.schema';
 import { AuthGrpcClientsModule } from '@app/common/grpc_clients';
 import { UsersModule } from '../users/users.module';
+import { CapabilityModule } from '../capability/capability.module';
 
 @Module({
   imports: [
@@ -16,6 +17,7 @@ import { UsersModule } from '../users/users.module';
     LoggerModule,
     AuthGrpcClientsModule,
     UsersModule,
+    CapabilityModule,
   ],
   controllers: [RolesController],
   providers: [RolesService, RolesRepository, UserTypeContorl],

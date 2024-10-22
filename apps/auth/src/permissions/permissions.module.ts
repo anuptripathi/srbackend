@@ -5,7 +5,7 @@ import { PermissionsService } from './permissions.service';
 import { LoggerModule, DatabaseModule, UserTypeContorl } from '@app/common';
 import { PermissionDocument, PermissionSchema } from './permission.schema';
 import { PermissionsRepository } from './permissions.repository';
-import { RolesModule } from '../roles/roles.module';
+import { CapabilityModule } from '../capability/capability.module';
 
 @Module({
   imports: [
@@ -15,7 +15,7 @@ import { RolesModule } from '../roles/roles.module';
     ]),
     LoggerModule,
     AuthGrpcClientsModule,
-    RolesModule,
+    CapabilityModule,
   ],
   controllers: [PermissionsController],
   providers: [PermissionsService, PermissionsRepository, UserTypeContorl],

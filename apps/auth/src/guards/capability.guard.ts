@@ -2,13 +2,13 @@ import { CanActivate, ExecutionContext, Injectable } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
 import { CurrentUserDto } from '@app/common';
 import { CAPABILITY_KEY, SUBJECT_KEY } from '@app/common';
-import { RolesService } from '../roles/roles.service';
+import { CapabilityService } from '../capability/capability.service';
 
 @Injectable()
 export class CapabilityGuard implements CanActivate {
   constructor(
     private readonly reflector: Reflector,
-    private readonly rolesService: RolesService,
+    private readonly capabilityService: CapabilityService,
   ) {}
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
@@ -30,7 +30,7 @@ export class CapabilityGuard implements CanActivate {
 
     try {
       // Make a gRPC request to auth service to check if the user has the necessary permissions
-      const hasPermission = await this.rolesService.checkCapability({
+      const hasPermission = await this.capabilityService.checkCapability({
         currentUser: user,
         subject: subject,
         actions: requiredCapabilities,
