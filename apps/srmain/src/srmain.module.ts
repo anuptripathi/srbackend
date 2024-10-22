@@ -14,6 +14,7 @@ import {
   AuthGrpcClientsModule,
   PaymentGrpcClientsModule,
 } from '@app/common/grpc_clients';
+import { UilityModule } from '@app/common/utility';
 
 @Module({
   imports: [
@@ -28,6 +29,7 @@ import {
     AuthGrpcClientsModule,
     PaymentGrpcClientsModule,
     HealthModule,
+    UilityModule,
   ],
   controllers: [SrmainController],
   providers: [SrmainService, SrmainRepository, UserTypeContorl],

@@ -3,40 +3,32 @@ import { CreateSrmainDto } from './dto/create-srmain.dto';
 import { UpdateSrmainDto } from './dto/update-srmain.dto';
 import { SrmainRepository } from './srmain.repository';
 import {
-  AUTH_SERVICE_NAME,
-  AuthServiceClient,
   CurrentUserDto,
   PAYMENTS_SERVICE_NAME,
   PaymentsServiceClient,
 } from '@app/common';
 import { ClientGrpc } from '@nestjs/microservices';
-import { lastValueFrom, map } from 'rxjs';
+import { map } from 'rxjs';
+import { UserUtilityService } from '@app/common/utility';
 
 @Injectable()
 export class SrmainService implements OnModuleInit {
   private paymentService: PaymentsServiceClient;
-  private authService: AuthServiceClient;
   constructor(
     private readonly srmainRepository: SrmainRepository,
     @Inject(PAYMENTS_SERVICE_NAME) private readonly paymentClient: ClientGrpc,
-    @Inject(AUTH_SERVICE_NAME) private readonly authClient: ClientGrpc,
+    private readonly utilityService: UserUtilityService,
   ) {}
 
   onModuleInit() {
     this.paymentService = this.paymentClient.getService<PaymentsServiceClient>(
       PAYMENTS_SERVICE_NAME,
     );
-    this.authService =
-      this.authClient.getService<AuthServiceClient>(AUTH_SERVICE_NAME);
   }
   async create(createSrmainDto: CreateSrmainDto, user: CurrentUserDto) {
     const getUserRequest = { userId: user.userId };
 
-    const userResponse = await lastValueFrom(
-      this.authService
-        .getUserById(getUserRequest)
-        .pipe(map((response) => response.userObj)),
-    );
+    const userResponse = await this.utilityService.getUserDetails(user.userId);
     console.log('userResponse', userResponse);
 
     return this.paymentService
