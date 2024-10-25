@@ -18,6 +18,7 @@ message CurrentUserMessage{
     string uType = 3;
     string accountId = 4;
     string roleId = 5;
+    string partnerId = 6;
 }
 
 message CheckPermissionsRequest {

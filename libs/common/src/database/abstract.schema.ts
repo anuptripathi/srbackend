@@ -17,4 +17,7 @@ export class AbstractDocument {
 
   @Prop({ type: String })
   accountId: string; // user's owner_id
+
+  @Prop({ type: String })
+  partnerId: string; // user's owner_id
 }

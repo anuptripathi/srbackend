@@ -77,6 +77,11 @@ export class UsersService {
         'Partner cant create users greater than or equal to his/her level.',
       );
     }
+    let partnerId = loggedInUserId;
+    if (userTypeLevels[loggedInUserType] < userTypeLevels[UserTypes.PARTNER]) {
+      //ie admin/enduser
+      partnerId = loggedInUser.partnerId;
+    }
 
     let createdUser = await this.usersRepository.create({
       ...usersCreateDto,
@@ -85,6 +90,7 @@ export class UsersService {
       addedBy: loggedInUserId || null, // this can be different from ownerId, in case if someone else on behalf of the ownerId/parentId adds/edits the record
       ancestorIds: ancestorIds,
       accountId,
+      partnerId,
     });
 
     if (newAccoutnId) {
@@ -181,6 +187,7 @@ export class UsersService {
         uType: user?.uType,
         accountId: user?.accountId,
         roleId: user?.roleId,
+        partnerId: user?.partnerId,
       };
       return userVal;
     }

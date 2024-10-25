@@ -17,6 +17,7 @@ export class AuthService {
       uType: user?.uType,
       accountId: user?.accountId,
       roleId: user?.roleId,
+      partnerId: user?.partnerId,
     };
     const expires = new Date();
     expires.setSeconds(

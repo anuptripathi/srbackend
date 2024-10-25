@@ -2,6 +2,7 @@ import { Logger, NotFoundException } from '@nestjs/common';
 import { FilterQuery, Model, Types, UpdateQuery } from 'mongoose';
 import { AbstractDocument } from './abstract.schema';
 import { CurrentUserDto } from '../dtos';
+import { UserTypes } from '../usertypes';
 
 export abstract class AbstractRepository<TDocument extends AbstractDocument> {
   protected abstract readonly logger: Logger;
@@ -92,10 +93,14 @@ export abstract class AbstractRepository<TDocument extends AbstractDocument> {
   }
 
   getOwnershipCondition(user: CurrentUserDto): FilterQuery<TDocument> {
+    if (user.uType === UserTypes.SUPERADMIN) {
+      return {};
+    }
     return {
       $or: [
-        { ownerId: user.userId }, // your data
-        { accountId: user.accountId }, // (main node)parent's data and peer's data
+        { ownerId: user.userId }, // self data.
+        { accountId: user.accountId }, // (main node) parent's data and peer's data
+        { partnerId: user.userId }, // if loggedInUser is partner, he/she can see all under him.
       ],
     };
   }

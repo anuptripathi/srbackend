@@ -14,6 +14,7 @@ export class PermissionsService {
       addedBy: user.userId,
       ownerId: user.userId,
       accountId: user.accountId,
+      partnerId: user.partnerId,
     });
   }
 

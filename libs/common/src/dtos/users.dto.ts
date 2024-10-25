@@ -4,4 +4,5 @@ export interface CurrentUserDto {
   uType: string;
   accountId: string; // top parent (kind of main account owner)
   roleId: string;
+  partnerId: string;
 }

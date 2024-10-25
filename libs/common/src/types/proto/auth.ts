@@ -20,6 +20,7 @@ export interface CurrentUserMessage {
   uType: string;
   accountId: string;
   roleId: string;
+  partnerId: string;
 }
 
 export interface CheckPermissionsRequest {

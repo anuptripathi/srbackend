@@ -20,6 +20,9 @@ export class UsersDocument extends AbstractDocument {
 
   @Prop()
   accountId: string;
+
+  @Prop()
+  partnerId: string;
 }
 
 export const UsersSchema = SchemaFactory.createForClass(UsersDocument);

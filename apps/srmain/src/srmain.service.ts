@@ -46,6 +46,7 @@ export class SrmainService implements OnModuleInit {
             addedBy: user.userId,
             //ancestorIds: userResponse.ancestorIds,
             accountId: user.accountId,
+            partnerId: user.partnerId,
           });
         }),
       );
