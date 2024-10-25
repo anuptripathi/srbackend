@@ -15,6 +15,7 @@ import {
   PaymentGrpcClientsModule,
 } from '@app/common/grpc_clients';
 import { UilityModule } from '@app/common/utility';
+import { ProductsModule } from './products/products.module';
 
 @Module({
   imports: [
@@ -30,6 +31,7 @@ import { UilityModule } from '@app/common/utility';
     PaymentGrpcClientsModule,
     HealthModule,
     UilityModule,
+    ProductsModule,
   ],
   controllers: [SrmainController],
   providers: [SrmainService, SrmainRepository, UserTypeContorl],

@@ -8,60 +8,59 @@ import {
   Delete,
   UseGuards,
 } from '@nestjs/common';
-import { SrmainService } from './srmain.service';
-import { CreateSrmainDto } from './dto/create-srmain.dto';
-import { UpdateSrmainDto } from './dto/update-srmain.dto';
+import { ProductsService } from './products.service';
+import { CreateProductDto } from './dto/create-product.dto';
+import { UpdateProductDto } from './dto/update-product.dto';
 import {
   CurrentUser,
   CurrentUserDto,
   JwtAuthGaurd,
-  Subject,
-  CapabilityGuard,
-  RequiredCapability,
   Subjects,
+  Subject,
+  RequiredCapability,
   Actions,
+  CapabilityGuard,
 } from '@app/common';
 
-@Controller(Subjects.TEST)
-@Subject(Subjects.TEST)
+@Controller(Subjects.PRODUCTS)
+@Subject(Subjects.PRODUCTS)
 @UseGuards(JwtAuthGaurd, CapabilityGuard)
-export class SrmainController {
-  constructor(private readonly srmainService: SrmainService) {}
+export class ProductsController {
+  constructor(private readonly productsService: ProductsService) {}
 
   @Post()
   @RequiredCapability(Actions.ADD)
   async create(
-    @Body() createSrmainDto: CreateSrmainDto,
+    @Body() createProductDto: CreateProductDto,
     @CurrentUser() user: CurrentUserDto,
   ) {
-    return this.srmainService.create(createSrmainDto, user);
+    return this.productsService.create(createProductDto, user);
   }
 
   @Get()
   @RequiredCapability(Actions.READ)
   async findAll() {
-    console.log('Show the result. Now Got the all rese..................');
-    return this.srmainService.findAll();
+    return this.productsService.findAll();
   }
 
   @Get(':id')
   @RequiredCapability(Actions.READ)
   async findOne(@Param('id') id: string) {
-    return this.srmainService.findOne(id);
+    return this.productsService.findOne(id);
   }
 
   @Patch(':id')
   @RequiredCapability(Actions.EDIT)
   async update(
     @Param('id') id: string,
-    @Body() updateSrmainDto: UpdateSrmainDto,
+    @Body() updateProductDto: UpdateProductDto,
   ) {
-    return this.srmainService.update(id, updateSrmainDto);
+    return this.productsService.update(id, updateProductDto);
   }
 
   @Delete(':id')
   @RequiredCapability(Actions.DELETE)
   async remove(@Param('id') id: string) {
-    return this.srmainService.remove(id);
+    return this.productsService.remove(id);
   }
 }

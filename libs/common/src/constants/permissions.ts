@@ -10,4 +10,5 @@ export enum Subjects {
   USERS = 'users',
   ROLES = 'roles',
   PERMISSIONS = 'permissions',
+  TEST = 'test',
 }
