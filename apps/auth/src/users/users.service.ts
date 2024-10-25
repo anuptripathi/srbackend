@@ -46,6 +46,13 @@ export class UsersService {
       ? loggedInUser.uType
       : UserTypes.ENDUSER;
     const userTypeLevels = new UserLevels();
+
+    if (userTypeLevels[toSaveUserType] > userTypeLevels[loggedInUserType]) {
+      throw new UnprocessableEntityException(
+        'Logged user has no capability to create a user of greater.',
+      );
+    }
+
     //if enduser or similar level account then, accountId will be loggedInUser's accountId else createdUsers's _id
     if (
       toSaveUserType === UserTypes.ENDUSER ||

@@ -17,7 +17,7 @@ export class SrmainService implements OnModuleInit {
   constructor(
     private readonly srmainRepository: SrmainRepository,
     @Inject(PAYMENTS_SERVICE_NAME) private readonly paymentClient: ClientGrpc,
-    private readonly utilityService: UserUtilityService,
+    private readonly utilityService: UserUtilityService, // not used, it's just to test
   ) {}
 
   onModuleInit() {
@@ -44,7 +44,8 @@ export class SrmainService implements OnModuleInit {
             invoiceId: res.id,
             ownerId: user.userId,
             addedBy: user.userId,
-            ancestorIds: userResponse.ancestorIds,
+            //ancestorIds: userResponse.ancestorIds,
+            accountId: user.accountId,
           });
         }),
       );

@@ -13,7 +13,7 @@ export class PermissionsService {
       ...createPermissionDto,
       addedBy: user.userId,
       ownerId: user.userId,
-      ancestorIds: [],
+      accountId: user.accountId,
     });
   }
 

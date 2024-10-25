@@ -3,23 +3,17 @@ import { CreateProductDto } from './dto/create-product.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
 import { ProductsRepository } from './products.repository';
 import { CurrentUserDto } from '@app/common';
-import { UserUtilityService } from '@app/common/utility';
 
 @Injectable()
 export class ProductsService {
-  constructor(
-    private readonly productsRepository: ProductsRepository,
-    private readonly utilityService: UserUtilityService,
-  ) {}
+  constructor(private readonly productsRepository: ProductsRepository) {}
 
   async create(createProductDto: CreateProductDto, user: CurrentUserDto) {
-    const userResponse = await this.utilityService.getUserDetails(user.userId);
-    console.log('userResponse', userResponse);
     return this.productsRepository.create({
       ...createProductDto,
       addedBy: user.userId,
       ownerId: user.userId,
-      ancestorIds: userResponse.ancestorIds,
+      accountId: user.accountId,
     });
   }
 

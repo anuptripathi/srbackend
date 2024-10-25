@@ -18,7 +18,7 @@ export class RolesService {
       ...createRoleDto,
       addedBy: user.userId,
       ownerId: user.userId,
-      ancestorIds: userObj.ancestorIds,
+      accountId: user.accountId,
     });
   }
 

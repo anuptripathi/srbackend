@@ -15,8 +15,11 @@ export class UsersDocument extends AbstractDocument {
   @Prop({ required: true })
   roleId: string;
 
+  @Prop({ type: [String], default: [] }) //history of parents
+  ancestorIds: string[];
+
   @Prop()
-  accountId?: string;
+  accountId: string;
 }
 
 export const UsersSchema = SchemaFactory.createForClass(UsersDocument);
