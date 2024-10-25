@@ -5,6 +5,7 @@ import { ProductsService } from './products.service';
 import { LoggerModule, DatabaseModule } from '@app/common';
 import { ProductDocument, ProductSchema } from './product.schema';
 import { ProductsRepository } from './products.repository';
+import { UilityModule } from '@app/common/utility';
 
 @Module({
   imports: [
@@ -13,6 +14,7 @@ import { ProductsRepository } from './products.repository';
       { name: ProductDocument.name, schema: ProductSchema },
     ]),
     LoggerModule,
+    UilityModule,
     AuthGrpcClientsModule,
   ],
   controllers: [ProductsController],
