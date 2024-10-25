@@ -39,14 +39,14 @@ export class ProductsController {
 
   @Get()
   @RequiredCapability(Actions.READ)
-  async findAll() {
-    return this.productsService.findAll();
+  async findAll(@CurrentUser() user) {
+    return this.productsService.findAll(user);
   }
 
   @Get(':id')
   @RequiredCapability(Actions.READ)
-  async findOne(@Param('id') id: string) {
-    return this.productsService.findOne(id);
+  async findOne(@Param('id') id: string, @CurrentUser() user) {
+    return this.productsService.findOne(id, user);
   }
 
   @Patch(':id')

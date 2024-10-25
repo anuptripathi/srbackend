@@ -23,12 +23,17 @@ export class ProductsService {
     });
   }
 
-  async findAll() {
-    return this.productsRepository.find({});
+  async findAll(user: CurrentUserDto) {
+    const ownershipCondition =
+      this.productsRepository.getOwnershipCondition(user);
+    //console.log(ownershipCondition);
+    return this.productsRepository.find(ownershipCondition);
   }
 
-  async findOne(_id: string) {
-    return this.productsRepository.findOne({ _id });
+  async findOne(_id: string, user: CurrentUserDto) {
+    const ownershipCondition =
+      this.productsRepository.getOwnershipCondition(user);
+    return this.productsRepository.findOne({ _id, ...ownershipCondition });
   }
 
   async update(_id: string, updateProductDto: UpdateProductDto) {

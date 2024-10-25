@@ -93,7 +93,11 @@ export abstract class AbstractRepository<TDocument extends AbstractDocument> {
 
   getOwnershipCondition(user: CurrentUserDto): FilterQuery<TDocument> {
     return {
-      $or: [{ ancestorIds: { $in: [user.userId] } }, { ownerId: user.userId }],
+      $or: [
+        { ancestorIds: { $in: [user.accountId] } }, // Peer's data
+        { ownerId: user.userId }, // your data
+        { ownerId: user.accountId }, // parent's data
+      ],
     };
   }
 }

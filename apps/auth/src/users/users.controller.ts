@@ -42,4 +42,10 @@ export class UsersController {
   getUser(@CurrentUser() user: CurrentUserDto) {
     return user;
   }
+
+  @Get('all')
+  @RequiredCapability(Actions.READ)
+  async getUserAll(@CurrentUser() user: CurrentUserDto) {
+    return await this.usersService.findAll();
+  }
 }

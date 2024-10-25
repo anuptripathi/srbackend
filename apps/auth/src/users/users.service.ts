@@ -89,6 +89,10 @@ export class UsersService {
     return createdUser;
   }
 
+  async findAll() {
+    return this.usersRepository.find({});
+  }
+
   async updateUser(
     userDto: UsersUpdateDto,
     loggedInUser: CurrentUserDto,
