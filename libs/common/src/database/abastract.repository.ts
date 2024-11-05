@@ -82,8 +82,22 @@ export abstract class AbstractRepository<TDocument extends AbstractDocument> {
     return document;
   }
 
-  async find(filterQuery: FilterQuery<TDocument>): Promise<TDocument[]> {
-    return this.model.find(filterQuery).lean<TDocument[]>(true);
+  async find(
+    filterQuery: FilterQuery<TDocument>,
+    limit?: number,
+    skip?: number,
+  ): Promise<TDocument[]> {
+    let query = this.model.find(filterQuery).lean<TDocument[]>(true);
+
+    if (limit) {
+      query = query.limit(limit);
+    }
+
+    if (skip) {
+      query = query.skip(skip);
+    }
+
+    return query;
   }
 
   async findOneAndDelete(
@@ -103,5 +117,13 @@ export abstract class AbstractRepository<TDocument extends AbstractDocument> {
         { partnerId: user.userId }, // if loggedInUser is partner, he/she can see all under him.
       ],
     };
+  }
+
+  async countDocuments(filterQuery: FilterQuery<TDocument>): Promise<number> {
+    return this.model.countDocuments(filterQuery);
+  }
+
+  async estimatedDocumentCount(): Promise<number> {
+    return this.model.estimatedDocumentCount();
   }
 }

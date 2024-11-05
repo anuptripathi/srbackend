@@ -7,10 +7,12 @@ import {
   Param,
   Delete,
   UseGuards,
+  Query,
 } from '@nestjs/common';
 import { ProductsService } from './products.service';
 import { CreateProductDto } from './dto/create-product.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
+import { of } from 'rxjs';
 import {
   CurrentUser,
   CurrentUserDto,
@@ -39,8 +41,13 @@ export class ProductsController {
 
   @Get()
   @RequiredCapability(Actions.READ)
-  async findAll(@CurrentUser() user) {
-    return this.productsService.findAll(user);
+  async findAll(
+    @CurrentUser() user,
+    @Query('limit') limit?: number,
+    @Query('offset') offset?: number,
+  ) {
+    console.log('LLLLLLLLLLL', limit, offset);
+    return this.productsService.findAll(user, limit, offset);
   }
 
   @Get(':id')

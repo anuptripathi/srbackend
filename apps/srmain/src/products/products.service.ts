@@ -18,11 +18,25 @@ export class ProductsService {
     });
   }
 
-  async findAll(user: CurrentUserDto) {
+  //The lastId here can be either document-id or offset.
+  async findAll(user: CurrentUserDto, limit: number = 10, offset: number = 0) {
     const ownershipCondition =
       this.productsRepository.getOwnershipCondition(user);
-    //console.log(ownershipCondition);
-    return this.productsRepository.find(ownershipCondition);
+    const data = await this.productsRepository.find(
+      ownershipCondition,
+      limit,
+      offset,
+    );
+    const estimatedCount =
+      await this.productsRepository.estimatedDocumentCount();
+
+    if (estimatedCount <= 10000) {
+      const totalRecords =
+        await this.productsRepository.countDocuments(ownershipCondition);
+      return { data, totalRecords, cursorBased: false };
+    } else {
+      return { data, cursorBased: true };
+    }
   }
 
   async findOne(_id: string, user: CurrentUserDto) {
