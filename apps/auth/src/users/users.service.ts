@@ -127,11 +127,21 @@ export class UsersService {
   ): Promise<UsersDocument> {
     await this.updateUserValidateDto(userDto.email, loggedInUser.email);
 
-    let updatedUser = await this.usersRepository.findOneAndUpdate(
+    // Create an update object based on the userDto
+    const updateData: UsersUpdateDto = { ...userDto };
+
+    // Conditionally hash the password if it exists and is not empty
+    if (userDto.password && userDto.password.length > 1) {
+      updateData.password = await bcrypt.hash(userDto.password, 10);
+    } else {
+      // Remove the password field if it doesn't need updating
+      delete updateData.password;
+    }
+
+    const updatedUser = await this.usersRepository.findOneAndUpdate(
       { _id: id ? id : loggedInUser.userId },
-      {
-        ...userDto,
-      },
+      updateData,
+      true, // Return the updated document
     );
 
     return updatedUser;

@@ -4,6 +4,9 @@ import { AbstractDocument, Subjects } from '@app/common';
 @Schema({ collection: Subjects.USERS, versionKey: false, timestamps: true })
 export class UsersDocument extends AbstractDocument {
   @Prop()
+  name: string;
+
+  @Prop()
   email: string;
 
   @Prop()
