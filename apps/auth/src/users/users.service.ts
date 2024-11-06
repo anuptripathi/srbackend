@@ -102,18 +102,33 @@ export class UsersService {
     return createdUser;
   }
 
-  async findAll() {
-    return this.usersRepository.find({});
+  async findAll(user: CurrentUserDto, limit: number = 10, offset: number = 0) {
+    const ownershipCondition = this.usersRepository.getOwnershipCondition(user);
+    const data = await this.usersRepository.find(
+      ownershipCondition,
+      limit,
+      offset,
+    );
+    const estimatedCount = await this.usersRepository.estimatedDocumentCount();
+
+    if (estimatedCount <= 10000) {
+      const totalRecords =
+        await this.usersRepository.countDocuments(ownershipCondition);
+      return { data, totalRecords, cursorBased: false };
+    } else {
+      return { data, cursorBased: true };
+    }
   }
 
   async updateUser(
     userDto: UsersUpdateDto,
     loggedInUser: CurrentUserDto,
+    id?: string,
   ): Promise<UsersDocument> {
     await this.updateUserValidateDto(userDto.email, loggedInUser.email);
 
     let updatedUser = await this.usersRepository.findOneAndUpdate(
-      { _id: loggedInUser.userId },
+      { _id: id ? id : loggedInUser.userId },
       {
         ...userDto,
       },

@@ -1,4 +1,13 @@
-import { Body, Controller, Get, Patch, Post, UseGuards } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  Param,
+  Patch,
+  Post,
+  Query,
+  UseGuards,
+} from '@nestjs/common';
 import { UsersService } from './users.service';
 import { UsersCreateDto } from './dto/users-create-dto';
 import {
@@ -28,6 +37,16 @@ export class UsersController {
     return this.usersService.createUser(usersCreateDto, user.userId);
   }
 
+  @Patch(':id')
+  @RequiredCapability(Actions.EDIT)
+  async updateSelected(
+    @Body() updateUserDto: UsersUpdateDto,
+    @CurrentUser() user: CurrentUserDto,
+    @Param('id') id: string,
+  ) {
+    return this.usersService.updateUser(updateUserDto, user, id);
+  }
+
   @Patch()
   @RequiredCapability(Actions.EDIT)
   async update(
@@ -37,15 +56,19 @@ export class UsersController {
     return this.usersService.updateUser(updateUserDto, user);
   }
 
-  @Get()
+  @Get('me')
   @RequiredCapability(Actions.READ)
   getUser(@CurrentUser() user: CurrentUserDto) {
     return user;
   }
 
-  @Get('all')
+  @Get()
   @RequiredCapability(Actions.READ)
-  async getUserAll(@CurrentUser() user: CurrentUserDto) {
-    return await this.usersService.findAll();
+  async getUserAll(
+    @CurrentUser() user: CurrentUserDto,
+    @Query('limit') limit?: number,
+    @Query('offset') offset?: number,
+  ) {
+    return await this.usersService.findAll(user, limit, offset);
   }
 }

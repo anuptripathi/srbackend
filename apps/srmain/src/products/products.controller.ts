@@ -46,7 +46,6 @@ export class ProductsController {
     @Query('limit') limit?: number,
     @Query('offset') offset?: number,
   ) {
-    console.log('LLLLLLLLLLL', limit, offset);
     return this.productsService.findAll(user, limit, offset);
   }
 
