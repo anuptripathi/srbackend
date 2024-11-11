@@ -140,7 +140,11 @@ export class UsersService {
     loggedInUser: CurrentUserDto,
     id?: string,
   ): Promise<UsersDocument> {
-    await this.updateUserValidateDto(userDto.email, loggedInUser.email);
+    const isUserExits = await this.userExits(userDto.email, id);
+    console.log('updateUser', isUserExits, userDto);
+    if (isUserExits) {
+      throw new UnprocessableEntityException('Email already exists');
+    }
 
     // Create an update object based on the userDto
     const updateData: UsersUpdateDto = { ...userDto };
@@ -153,13 +157,17 @@ export class UsersService {
       delete updateData.password;
     }
 
-    const updatedUser = await this.usersRepository.findOneAndUpdate(
-      { _id: id ? id : loggedInUser.userId },
-      updateData,
-      true, // Return the updated document
-    );
+    if (id) {
+      const updatedUser = await this.usersRepository.findOneAndUpdate(
+        { _id: id },
+        updateData,
+        true, // Return the updated document
+      );
 
-    return updatedUser;
+      return updatedUser;
+    } else {
+      throw new UnprocessableEntityException('User not found');
+    }
   }
 
   private async createUserValidateDto(email: string) {
@@ -171,25 +179,24 @@ export class UsersService {
     throw new UnprocessableEntityException('Email does alreay exist');
   }
 
-  private async updateUserValidateDto(
-    dtoEmail: string,
-    loggedInUserEmail: string,
-  ) {
+  private async userExits(dtoEmail: string, id: string) {
     try {
-      const user = await this.usersRepository.findOne({
-        $and: [
-          { email: dtoEmail }, // Check for the dtoEmail
-          { email: { $ne: loggedInUserEmail } }, // Exclude logged-in user's email
-        ],
-      });
+      const user = await this.usersRepository.findOne(
+        {
+          $and: [
+            { email: dtoEmail }, // Check for the dtoEmail
+            { _id: { $ne: id } }, // Exclude logged-in user's email
+          ],
+        },
+        false,
+      );
 
       if (user) {
-        throw new UnprocessableEntityException('Email already exists');
+        return true;
+      } else {
+        return false;
       }
     } catch (e) {
-      if (e.status === 404) {
-        return true;
-      }
       throw new UnprocessableEntityException(
         'An error occurred while validating the email',
         e,
