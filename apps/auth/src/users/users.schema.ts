@@ -26,6 +26,9 @@ export class UsersDocument extends AbstractDocument {
 
   @Prop()
   partnerId: string;
+
+  @Prop()
+  refreshToken?: string;
 }
 
 export const UsersSchema = SchemaFactory.createForClass(UsersDocument);

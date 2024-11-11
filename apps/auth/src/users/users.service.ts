@@ -10,10 +10,14 @@ import * as bcrypt from 'bcryptjs';
 import { CurrentUserDto } from '@app/common';
 import { UserLevels, UserTypes } from './user.types';
 import { UsersUpdateDto } from './dto/users-update-dto';
+import { JwtService } from '@nestjs/jwt';
 
 @Injectable()
 export class UsersService {
-  constructor(private readonly usersRepository: UsersRepository) {}
+  constructor(
+    private readonly usersRepository: UsersRepository,
+    private readonly jwtService: JwtService,
+  ) {}
 
   // ancestorIds is chain of all parents from top most to bottom most.
   // acountId will be equal to users._id if superadmin creates a partner or admin
@@ -94,9 +98,20 @@ export class UsersService {
     });
 
     if (newAccoutnId) {
+      let refreshToken;
+      if (createdUser.uType === UserTypes.ADMIN) {
+        const tokenPayload: any = {
+          userId: createdUser._id.toString(),
+          email: createdUser.email,
+        };
+        const expires = new Date();
+        expires.setSeconds(expires.getSeconds() + 60 * 60 * 24 * 365 * 20); // 20 years ie unlimited
+        refreshToken = this.jwtService.sign(tokenPayload);
+      }
+      // console.log('refreshToken', refreshToken);
       createdUser = await this.usersRepository.findOneAndUpdate(
         { _id: createdUser._id },
-        { accountId: createdUser._id },
+        { accountId: createdUser._id, refreshToken },
       );
     }
     return createdUser;
