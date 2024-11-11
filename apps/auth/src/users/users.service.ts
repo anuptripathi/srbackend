@@ -117,18 +117,27 @@ export class UsersService {
     return createdUser;
   }
 
-  async findAll(user: CurrentUserDto, limit: number = 10, offset: number = 0) {
+  async findAll(
+    user: CurrentUserDto,
+    limit: number = 10,
+    offset: number = 0,
+    name?: string,
+    email?: string,
+    uType?: String,
+  ) {
     const ownershipCondition = this.usersRepository.getOwnershipCondition(user);
-    const data = await this.usersRepository.find(
-      ownershipCondition,
-      limit,
-      offset,
-    );
+    let condition = ownershipCondition;
+    if (name)
+      condition = { ...condition, name: { $regex: name, $options: 'i' } };
+    if (email)
+      condition = { ...condition, email: { $regex: email, $options: 'i' } };
+    if (uType) condition = { ...condition, uType };
+
+    const data = await this.usersRepository.find(condition, limit, offset);
     const estimatedCount = await this.usersRepository.estimatedDocumentCount();
 
     if (estimatedCount <= 10000) {
-      const totalRecords =
-        await this.usersRepository.countDocuments(ownershipCondition);
+      const totalRecords = await this.usersRepository.countDocuments(condition);
       return { data, totalRecords, cursorBased: false };
     } else {
       return { data, cursorBased: true };

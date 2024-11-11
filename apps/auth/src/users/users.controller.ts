@@ -69,7 +69,17 @@ export class UsersController {
     @CurrentUser() user: CurrentUserDto,
     @Query('limit') limit?: number,
     @Query('offset') offset?: number,
+    @Query('name') name?: string,
+    @Query('email') email?: string,
+    @Query('uType') uType?: string,
   ) {
-    return await this.usersService.findAll(user, limit, offset);
+    return await this.usersService.findAll(
+      user,
+      limit,
+      offset,
+      name,
+      email,
+      uType,
+    );
   }
 }
