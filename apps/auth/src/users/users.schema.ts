@@ -32,3 +32,5 @@ export class UsersDocument extends AbstractDocument {
 }
 
 export const UsersSchema = SchemaFactory.createForClass(UsersDocument);
+
+AbstractDocument.applyHooks(UsersSchema);

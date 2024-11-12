@@ -20,4 +20,20 @@ export class AbstractDocument {
 
   @Prop({ type: String })
   partnerId: string; // user's owner_id
+
+  static applyHooks(schema: any) {
+    schema.pre('find', function () {
+      console.log('Executing query:');
+      console.dir(this.getQuery(), { depth: null, colors: true });
+    });
+
+    schema.pre('findOne', function () {
+      console.log('Executing query:');
+      console.dir(this.getQuery(), { depth: null, colors: true });
+    });
+
+    schema.pre('save', function () {
+      console.log('Saving document:', this);
+    });
+  }
 }
