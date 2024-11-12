@@ -144,13 +144,30 @@ export class UsersService {
     }
   }
 
+  async deleteUser(id: string, user: CurrentUserDto) {
+    const ownershipCondition = this.usersRepository.getOwnershipCondition(user);
+    const userToDelete = await this.usersRepository.findOne(
+      {
+        _id: id,
+        ...ownershipCondition,
+      },
+      false,
+    );
+
+    console.log(userToDelete, user, id);
+
+    if (!userToDelete) {
+      throw new UnprocessableEntityException('User not found');
+    }
+
+    await this.usersRepository.deleteOne({ _id: id });
+  }
   async updateUser(
     userDto: UsersUpdateDto,
     loggedInUser: CurrentUserDto,
     id?: string,
   ): Promise<UsersDocument> {
     const isUserExits = await this.userExits(userDto.email, id);
-    console.log('updateUser', isUserExits, userDto);
     if (isUserExits) {
       throw new UnprocessableEntityException('Email already exists');
     }

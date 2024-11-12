@@ -42,7 +42,7 @@ export class AuthController implements AuthServiceController {
   }
 
   async checkPermissions(data: CheckPermissionsRequest) {
-    console.log(data);
+    //console.log(data);
     const hasPermission = await this.capabilityService.checkCapability(data);
     // Return response in the expected format
     return { hasPermission };

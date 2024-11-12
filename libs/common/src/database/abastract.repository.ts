@@ -123,6 +123,10 @@ export abstract class AbstractRepository<TDocument extends AbstractDocument> {
     return this.model.countDocuments(filterQuery);
   }
 
+  async deleteOne(filterQuery: FilterQuery<TDocument>): Promise<any> {
+    return this.model.deleteOne(filterQuery);
+  }
+
   async estimatedDocumentCount(): Promise<number> {
     return this.model.estimatedDocumentCount();
   }
