@@ -24,3 +24,10 @@ spec:
                 name: auth-http
                 port:
                   number: 3001
+          - path: /api/(metrics)(/|$)(.*)
+            pathType: Prefix
+            backend:
+              service:
+                name: metrics
+                port:
+                  number: 3005

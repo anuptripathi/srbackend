@@ -1,0 +1,25 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: metrics
+  name: metrics
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: metrics
+  template:
+    metadata:
+      labels:
+        app: metrics
+    spec:
+      containers:
+        - image: {{ .Values.metrics.image }}
+          name: auth
+          command: {{ .Values.metrics.command | toJson }}
+          env:
+            - name: HTTP_PORT
+              value: '3005'
+          ports:
+            - containerPort: 3005

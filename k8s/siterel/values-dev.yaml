@@ -13,3 +13,6 @@ payments:
 notifications:
   image: anup84/notifications:latest
   command: ['pnpm', 'run', 'start:dev', 'notifications']
+metrics:
+  image: anup84/metrics:latest
+  command: ['pnpm', 'run', 'start:dev', 'metrics']

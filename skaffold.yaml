@@ -47,6 +47,17 @@ build:
             dest: /usr/src/app
           - src: 'libs/**/*.ts'
             dest: /usr/src/app
+    - image: anup84/metrics
+      context: .
+      docker:
+        dockerfile: ./apps/metrics/Dockerfile
+        target: development
+      sync:
+        manual:
+          - src: 'apps/metrics/src/**/*.ts'
+            dest: /usr/src/app
+          - src: 'libs/**/*.ts'
+            dest: /usr/src/app
 deploy:
   helm:
     releases:

@@ -1,0 +1,30 @@
+receivers:
+  hostmetrics:
+    collection_interval: 10s
+    scrapers:
+      cpu:
+      memory:
+      disk:
+      filesystem:
+      network:
+
+processors:
+  batch:
+    timeout: 10s
+
+exporters:
+  # Use the HTTP exporter to send data to the backend API
+  http:
+    endpoint: 'http://localhost/api/metrics'
+    method: 'POST'
+    headers:
+      Authorization: 'Bearer YOUR_JWT_TOKEN' # Replace with the actual JWT token
+    timeout: 10s
+    data_format: 'json'
+
+service:
+  pipelines:
+    metrics:
+      receivers: [hostmetrics]
+      processors: [batch]
+      exporters: [http]
