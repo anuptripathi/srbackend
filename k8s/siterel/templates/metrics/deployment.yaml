@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
         - image: {{ .Values.metrics.image }}
-          name: auth
+          name: metrics
           command: {{ .Values.metrics.command | toJson }}
           env:
             - name: HTTP_PORT
