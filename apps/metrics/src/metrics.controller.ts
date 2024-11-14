@@ -1,35 +1,64 @@
-import { Controller, Get, Post, Req, Res } from '@nestjs/common';
+// metrics.controller.ts
+import {
+  Controller,
+  Get,
+  Post,
+  Req,
+  Res,
+  UnprocessableEntityException,
+  UseGuards,
+} from '@nestjs/common';
 import { MetricsService } from './metrics.service';
 import { Request, Response } from 'express';
+import { CreateMetricsDto } from './createMetrics.dto';
+import {
+  CurrentUser,
+  CurrentUserDto,
+  JwtAuthGaurd,
+  Subject,
+  CapabilityGuard,
+  RequiredCapability,
+  Subjects,
+  Actions,
+} from '@app/common';
 
+@Subject(Subjects.METRICS)
+@UseGuards(JwtAuthGaurd, CapabilityGuard)
 @Controller()
 export class MetricsController {
   constructor(private readonly metricsService: MetricsService) {}
 
-  @Get()
-  getHello(): string {
-    return this.metricsService.getHello();
-  }
-
+  @RequiredCapability(Actions.ADD)
   @Post('telegraf')
-  async receiveTelegrafMetrics(
+  async receiveMetrics(
     @Req() req: Request,
     @Res() res: Response,
+    @CurrentUser() user: CurrentUserDto,
   ): Promise<void> {
     try {
-      const metrics = JSON.parse(req.body);
-      console.log(
-        'Received Telegraf Metrics:',
-        JSON.stringify(metrics, null, 2),
-      );
+      // Parse incoming metrics
+      const metric = JSON.parse(req.body);
+      if (!metric?.metrics) {
+        throw new UnprocessableEntityException('Invalid metrics format');
+      }
+      const metrics = metric.metrics;
+      if (Array.isArray(metrics)) {
+        // If it's an array, map over it to structure the data
+        const metricsDto: CreateMetricsDto[] = metrics;
+        console.log('Received Metrics:', JSON.stringify(metricsDto, null, 2));
+        await this.metricsService.saveMetrics(metrics, user);
 
-      // Process metrics as needed
-      // You can save them to a database or trigger other services
-
-      res.status(200).send('Metrics received');
+        res.status(200).send('Metrics received and stored');
+      }
     } catch (error) {
       console.error('Error processing metrics:', error);
       res.status(500).send('Failed to process metrics');
     }
+  }
+
+  @Get()
+  @RequiredCapability(Actions.READ)
+  async findAll() {
+    return this.metricsService.findAll();
   }
 }

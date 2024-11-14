@@ -17,6 +17,28 @@ export abstract class AbstractRepository<TDocument extends AbstractDocument> {
     return (await createdDocument.save()).toJSON() as unknown as TDocument;
   }
 
+  // New insertMany method to insert multiple documents
+  async insertMany(
+    documents: object[],
+    appendEach?: object,
+  ): Promise<TDocument[]> {
+    const preparedDocuments = documents.map((doc) => ({
+      ...doc,
+      _id: new Types.ObjectId(), // Ensure each document has a unique _id
+      ...appendEach,
+    }));
+
+    try {
+      const result = await this.model.insertMany(preparedDocuments, {
+        ordered: false,
+      });
+      return result.map((doc) => doc.toJSON() as unknown as TDocument); // Return the inserted documents as JSON
+    } catch (error) {
+      this.logger.error('Error inserting multiple documents', error);
+      throw new Error('Failed to insert multiple documents');
+    }
+  }
+
   async findOne(
     filterQuery: FilterQuery<TDocument>,
     throwErr = true,
@@ -84,7 +106,7 @@ export abstract class AbstractRepository<TDocument extends AbstractDocument> {
 
   async find(
     filterQuery: FilterQuery<TDocument>,
-    limit?: number,
+    limit: number = 100, //default limit
     skip?: number,
   ): Promise<TDocument[]> {
     let query = this.model.find(filterQuery).lean<TDocument[]>(true);
