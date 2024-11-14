@@ -5,7 +5,13 @@ import { ConfigService } from '@nestjs/config';
 import * as bodyParser from 'body-parser';
 async function bootstrap() {
   const app = await NestFactory.create(MetricsModule);
-  app.use('/metrics/telegraf', bodyParser.text({ type: 'text/plain' }));
+  app.use(
+    '/metrics/telegraf',
+    bodyParser.text({
+      type: 'text/plain',
+      limit: '10mb', // Adjust this limit based on your needs (e.g., '10mb', '50mb', etc.)
+    }),
+  );
   app.useLogger(app.get(Logger));
   app.setGlobalPrefix('metrics');
   const configService = app.get(ConfigService);
