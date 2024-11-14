@@ -13,18 +13,17 @@ processors:
     timeout: 10s
 
 exporters:
-  # Use the HTTP exporter to send data to the backend API
-  http:
-    endpoint: 'http://localhost/api/metrics'
-    method: 'POST'
+  otlphttp:
+    endpoint: 'http://localhost/api/metrics' # Replace with your actual endpoint
     headers:
       Authorization: 'Bearer YOUR_JWT_TOKEN' # Replace with the actual JWT token
+      Content-Type: 'application/x-otlp+json'
+    compression: 'gzip' # Optional: enables gzip compression
     timeout: 10s
-    data_format: 'json'
 
 service:
   pipelines:
     metrics:
       receivers: [hostmetrics]
       processors: [batch]
-      exporters: [http]
+      exporters: [otlphttp]
