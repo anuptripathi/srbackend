@@ -3,6 +3,7 @@ import {
   Controller,
   Get,
   Post,
+  Query,
   Req,
   Res,
   UnprocessableEntityException,
@@ -60,5 +61,17 @@ export class MetricsController {
   @RequiredCapability(Actions.READ)
   async findAll() {
     return this.metricsService.findAll();
+  }
+
+  @Get('ram')
+  @RequiredCapability(Actions.READ)
+  async getCpuUsage(@Query('ago') ago?: string) {
+    return this.metricsService.getRamUsage(ago);
+  }
+
+  @Get('cpu')
+  @RequiredCapability(Actions.READ)
+  async getRamUsage(@Query('ago') ago?: string) {
+    return this.metricsService.getCpuUsage(ago);
   }
 }

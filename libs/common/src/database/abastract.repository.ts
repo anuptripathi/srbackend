@@ -18,16 +18,7 @@ export abstract class AbstractRepository<TDocument extends AbstractDocument> {
   }
 
   // New insertMany method to insert multiple documents
-  async createMany(
-    documents: object[],
-    userData?: object,
-  ): Promise<TDocument[]> {
-    const preparedDocuments = documents.map((doc) => ({
-      ...doc,
-      _id: new Types.ObjectId(), // Ensure each document has a unique _id
-      ...userData,
-    }));
-
+  async createMany(preparedDocuments: object[]): Promise<TDocument[]> {
     try {
       const result = await this.model.insertMany(preparedDocuments, {
         ordered: false,
@@ -109,7 +100,10 @@ export abstract class AbstractRepository<TDocument extends AbstractDocument> {
     limit: number = 100, //default limit
     skip?: number,
   ): Promise<TDocument[]> {
-    let query = this.model.find(filterQuery).lean<TDocument[]>(true);
+    let query = this.model
+      .find(filterQuery)
+      .sort({ _id: -1 })
+      .lean<TDocument[]>(true);
 
     if (limit) {
       query = query.limit(limit);

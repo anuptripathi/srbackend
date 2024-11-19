@@ -32,7 +32,7 @@ spec:
                   key: jwtSecret
 
             - name: JWT_EXPIRATION
-              value: '3600'
+              value: '36000'
 
             - name: HTTP_PORT
               value: '3001'

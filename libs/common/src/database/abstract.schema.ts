@@ -21,7 +21,15 @@ export class AbstractDocument {
   @Prop({ type: String })
   partnerId: string; // user's owner_id
 
-  static applyHooks(schema: any) {
+  static applyIndexes(schema: any) {
+    // Add indexes for accountId, ownerId, and addedBy
+    schema.index({ accountId: 1 });
+    schema.index({ ownerId: 1 });
+    schema.index({ addedBy: 1 });
+  }
+
+  static applyQueryHooks(schema: any) {
+    // Add hooks for query logging
     schema.pre('find', function () {
       console.log('Executing query:');
       console.dir(this.getQuery(), { depth: null, colors: true });
@@ -35,5 +43,10 @@ export class AbstractDocument {
     schema.pre('save', function () {
       console.log('Saving document:', this);
     });
+  }
+
+  static applyHooks(schema: any) {
+    this.applyIndexes(schema); // Apply indexes
+    this.applyQueryHooks(schema); // Apply hooks
   }
 }
