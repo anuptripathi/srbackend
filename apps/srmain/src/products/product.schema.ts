@@ -1,8 +1,8 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { AbstractDocument } from '@app/common';
+import { AbstractDocument, Subjects } from '@app/common';
 
 @Schema({
-  collection: 'products',
+  collection: Subjects.PRODUCTS,
   timestamps: true,
   versionKey: false,
 })

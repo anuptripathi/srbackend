@@ -9,10 +9,7 @@ import { CurrentUserDto } from '@app/common';
 
 @Injectable()
 export class MetricsService {
-  constructor(
-    @InjectModel(MetricsDocument.name)
-    private readonly metricModel: MetricsRepository,
-  ) {}
+  constructor(private readonly metricModel: MetricsRepository) {}
 
   async saveMetrics(
     metrics: CreateMetricsDto[],
@@ -20,12 +17,14 @@ export class MetricsService {
   ): Promise<void> {
     try {
       // Insert multiple metrics at once
-      await this.metricModel.insertMany(metrics, {
+      const userData = {
         ownerId: user.userId,
         addedBy: user.userId,
-        accountId: user.accountId,
-        partnerId: user.partnerId,
-      });
+        accountId: user?.accountId,
+        partnerId: user?.partnerId,
+      };
+      console.log('userData (createMany)', userData);
+      await this.metricModel.createMany(metrics, userData);
       console.log('metrics saved successfully');
     } catch (error) {
       console.error('Error saving metrics:', error);

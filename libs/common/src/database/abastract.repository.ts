@@ -18,14 +18,14 @@ export abstract class AbstractRepository<TDocument extends AbstractDocument> {
   }
 
   // New insertMany method to insert multiple documents
-  async insertMany(
+  async createMany(
     documents: object[],
-    appendEach?: object,
+    userData?: object,
   ): Promise<TDocument[]> {
     const preparedDocuments = documents.map((doc) => ({
       ...doc,
       _id: new Types.ObjectId(), // Ensure each document has a unique _id
-      ...appendEach,
+      ...userData,
     }));
 
     try {

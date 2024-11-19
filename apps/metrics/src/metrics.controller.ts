@@ -45,7 +45,7 @@ export class MetricsController {
       if (Array.isArray(metrics)) {
         // If it's an array, map over it to structure the data
         const metricsDto: CreateMetricsDto[] = metrics;
-        console.log('Received Metrics:', JSON.stringify(metricsDto, null, 2));
+        //console.log('Received Metrics:', JSON.stringify(metricsDto, null, 2));
         await this.metricsService.saveMetrics(metrics, user);
 
         res.status(200).send('Metrics received and stored');

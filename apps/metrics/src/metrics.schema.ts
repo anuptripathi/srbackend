@@ -1,7 +1,7 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { AbstractDocument, Subjects } from '@app/common';
 
-@Schema({ collection: Subjects.TEST, versionKey: false, timestamps: true })
+@Schema({ collection: Subjects.METRICS, versionKey: false, timestamps: true })
 export class MetricsDocument extends AbstractDocument {
   @Prop({ type: String, required: true })
   name: string;
@@ -17,3 +17,5 @@ export class MetricsDocument extends AbstractDocument {
 }
 
 export const MetricsSchema = SchemaFactory.createForClass(MetricsDocument);
+
+AbstractDocument.applyHooks(MetricsSchema);

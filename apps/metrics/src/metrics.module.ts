@@ -8,6 +8,7 @@ import {
 } from '@app/common';
 import { ConfigModule } from '@nestjs/config';
 import { MetricsSchema, MetricsDocument } from './metrics.schema';
+import { MetricsRepository } from './metrics.repository';
 
 @Module({
   imports: [
@@ -23,6 +24,6 @@ import { MetricsSchema, MetricsDocument } from './metrics.schema';
     AuthGrpcClientsModule,
   ],
   controllers: [MetricsController],
-  providers: [MetricsService],
+  providers: [MetricsService, MetricsRepository],
 })
 export class MetricsModule {}
