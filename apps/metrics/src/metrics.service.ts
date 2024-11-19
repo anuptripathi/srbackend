@@ -17,15 +17,20 @@ export class MetricsService {
   ): Promise<void> {
     try {
       // Insert multiple metrics at once
-      const userData = {
-        ownerId: user.userId,
-        addedBy: user.userId,
-        accountId: user?.accountId,
-        partnerId: user?.partnerId,
-      };
-      console.log('userData (createMany)', userData);
-      await this.metricModel.createMany(metrics, userData);
-      console.log('metrics saved successfully');
+      if (metrics && metrics?.length > 0) {
+        const userData = {
+          ownerId: user.userId,
+          addedBy: user.userId,
+          accountId: user?.accountId,
+          partnerId: user?.partnerId,
+          host: metrics[0]?.tags.host,
+        };
+        console.log('userData (createMany)', userData);
+        await this.metricModel.createMany(metrics, userData);
+        console.log('metrics saved successfully');
+      } else {
+        throw new Error('Metrics array was not populated');
+      }
     } catch (error) {
       console.error('Error saving metrics:', error);
       throw new Error('Failed to save metrics');

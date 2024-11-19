@@ -4,6 +4,9 @@ import { AbstractDocument, Subjects } from '@app/common';
 @Schema({ collection: Subjects.METRICS, versionKey: false, timestamps: true })
 export class MetricsDocument extends AbstractDocument {
   @Prop({ type: String, required: true })
+  host: string;
+
+  @Prop({ type: String, required: true })
   name: string;
 
   @Prop({ type: Date, required: true })
@@ -17,5 +20,7 @@ export class MetricsDocument extends AbstractDocument {
 }
 
 export const MetricsSchema = SchemaFactory.createForClass(MetricsDocument);
+// Define the index
+MetricsSchema.index({ host: 1, name: 1, timestamp: -1 });
 
 AbstractDocument.applyHooks(MetricsSchema);
