@@ -25,7 +25,7 @@ export class JwtAuthGaurd implements CanActivate, OnModuleInit {
     const jwt =
       context.switchToHttp().getRequest().cookies?.Authentication ||
       context.switchToHttp().getRequest().headers?.authorization;
-    console.log('jwt is', jwt);
+    console.log('jwt is (common gaurd):', jwt);
     if (!jwt) {
       return false;
     }

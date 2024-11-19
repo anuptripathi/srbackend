@@ -19,7 +19,16 @@ spec:
           name: metrics
           command: {{ .Values.metrics.command | toJson }}
           env:
+            - name: MONGODB_URI
+              valueFrom:
+                secretKeyRef:
+                  name: mongodb
+                  key: connectionString
+
             - name: HTTP_PORT
               value: '3005'
+
+            - name: AUTH_GRPC_URL
+              value: 'auth-tcp:5001'
           ports:
             - containerPort: 3005
