@@ -3,7 +3,7 @@ import { Injectable } from '@nestjs/common';
 import { CreateMetricsDto } from './createMetrics.dto';
 import { MetricsRepository } from './metrics.repository';
 import { CurrentUserDto } from '@app/common';
-import { subDays, subHours, subMonths, subWeeks } from 'date-fns';
+import { fromUnixTime, subDays, subHours, subMonths, subWeeks } from 'date-fns';
 import { Types } from 'mongoose';
 
 @Injectable()
@@ -26,7 +26,7 @@ export class MetricsService {
         };
         const preparedDocuments = metrics.map((doc) => ({
           ...doc,
-          timestamp: new Date(doc.timestamp * 1000),
+          timestamp: fromUnixTime(doc.timestamp),
           _id: new Types.ObjectId(), // Ensure each document has a unique _id
           ...userData,
         }));
