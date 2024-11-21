@@ -20,7 +20,7 @@ export class MetricsDocument extends AbstractDocument {
 }
 
 export const MetricsSchema = SchemaFactory.createForClass(MetricsDocument);
-// Define the index
+// Define the composite index
 MetricsSchema.index({ host: 1, name: 1, timestamp: -1 });
 
 AbstractDocument.applyHooks(MetricsSchema);

@@ -22,11 +22,11 @@ export class MetricsService {
           addedBy: user.userId,
           accountId: user?.accountId,
           partnerId: user?.partnerId,
-          host: metrics[0]?.tags.host,
         };
         const preparedDocuments = metrics.map((doc) => ({
           ...doc,
           timestamp: fromUnixTime(doc.timestamp),
+          host: doc.tags.host,
           _id: new Types.ObjectId(), // Ensure each document has a unique _id
           ...userData,
         }));
