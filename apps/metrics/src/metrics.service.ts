@@ -5,11 +5,7 @@ import { MetricsRepository } from './metrics.repository';
 import { CurrentUserDto } from '@app/common';
 import { Types } from 'mongoose';
 import { transformMetric } from './helper';
-import {
-  getAgoToSeconds,
-  getStartOfTimeFromAgo,
-  getUnitAndNumberFromAgoRange,
-} from '@app/common';
+import { getAgoToSeconds, getStartOfTimeFromAgo } from '@app/common';
 
 @Injectable()
 export class MetricsService {
@@ -50,8 +46,9 @@ export class MetricsService {
     return this.metricModel.find({}, 20);
   }
 
-  async getCpuUsage(timeRange: string): Promise<any> {
+  async getCpuUsage(user: CurrentUserDto, timeRange = '1h'): Promise<any> {
     try {
+      const ownershipCondition = this.metricModel.getOwnershipCondition(user);
       let interval = 10; //seconds
       let recordLimit = 120;
       const rangeInseconds = getAgoToSeconds(timeRange);
@@ -72,6 +69,7 @@ export class MetricsService {
           $match: {
             name: 'cpu', // Example filter: only include documents where `name` is "cpu"
             timestamp: { $gte: startTimestamp }, // Filter by timestamp
+            ...ownershipCondition,
           },
         },
         // Step 1: Add an interval key
@@ -129,8 +127,9 @@ export class MetricsService {
     }
   }
 
-  async getMemUsage(timeRange: string): Promise<any> {
+  async getMemUsage(user: CurrentUserDto, timeRange = '1h'): Promise<any> {
     try {
+      const ownershipCondition = this.metricModel.getOwnershipCondition(user);
       let interval = 10; //seconds
       let recordLimit = 120;
       const rangeInseconds = getAgoToSeconds(timeRange);
@@ -151,6 +150,7 @@ export class MetricsService {
           $match: {
             name: 'mem', // Example filter: only include documents where `name` is "mem"
             timestamp: { $gte: startTimestamp }, // Filter by timestamp
+            ...ownershipCondition,
           },
         },
         // Step 1: Add an interval key

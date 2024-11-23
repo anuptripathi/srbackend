@@ -65,13 +65,19 @@ export class MetricsController {
 
   @Get('ram')
   @RequiredCapability(Actions.READ)
-  async getCpuUsage(@Query('ago') ago?: string) {
-    return this.metricsService.getMemUsage(ago);
+  async getCpuUsage(
+    @CurrentUser() user: CurrentUserDto,
+    @Query('ago') ago?: string,
+  ) {
+    return this.metricsService.getMemUsage(user, ago);
   }
 
   @Get('cpu')
   @RequiredCapability(Actions.READ)
-  async getRamUsage(@Query('ago') ago?: string) {
-    return this.metricsService.getCpuUsage(ago);
+  async getRamUsage(
+    @CurrentUser() user: CurrentUserDto,
+    @Query('ago') ago?: string,
+  ) {
+    return this.metricsService.getCpuUsage(user, ago);
   }
 }
