@@ -32,15 +32,15 @@ export class MetricsService {
           accountId: user?.accountId,
           partnerId: user?.partnerId,
         };
-        const preparedDocuments = metrics.map((doc) => ({
+        const preparedDocuments = metrics.map(transformMetric).map((doc) => ({
           ...doc,
           host: doc.tags.host,
           _id: new Types.ObjectId(), // Ensure each document has a unique _id
           ...userData,
         }));
-        console.log('userData (createMany)', userData);
+        console.log('userData (createMany)', preparedDocuments);
         await this.metricModel.createMany(preparedDocuments);
-        console.log('metrics saved successfully', metrics);
+        // console.log('metrics saved successfully', metrics);
       } else {
         throw new Error('Metrics array was not populated');
       }
@@ -287,4 +287,48 @@ export class MetricsService {
       throw new Error('Failed to fetch Mem usage');
     }
   }
+}
+
+const METRIC_TEMPLATES = {
+  mem: {
+    fields: ['total', 'used_percent', 'available_percent'], // Only these fields will be saved
+    tags: ['host'], // Only these tags will be saved
+  },
+  cpu: {
+    fields: ['usage_active', 'usage_system', 'usage_user'], // Only these fields will be saved
+    tags: ['host', 'cpu'], // Only these tags will be saved
+  },
+  // Add templates for other metric names as needed
+};
+
+function transformMetric(metric: any): any {
+  const template = METRIC_TEMPLATES[metric.name];
+
+  if (!template) {
+    // If no template is defined for this metric, skip it
+    return null;
+  }
+
+  const transformedMetric = {
+    name: metric.name,
+    timestamp: metric.timestamp,
+    fields: {},
+    tags: {},
+  };
+
+  // Filter fields based on the template
+  template.fields.forEach((field) => {
+    if (metric.fields[field] !== undefined) {
+      transformedMetric.fields[field] = metric.fields[field];
+    }
+  });
+
+  // Filter tags based on the template
+  template.tags.forEach((tag) => {
+    if (metric.tags[tag] !== undefined) {
+      transformedMetric.tags[tag] = metric.tags[tag];
+    }
+  });
+
+  return transformedMetric;
 }
