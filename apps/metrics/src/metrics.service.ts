@@ -3,17 +3,13 @@ import { Injectable } from '@nestjs/common';
 import { CreateMetricsDto } from './createMetrics.dto';
 import { MetricsRepository } from './metrics.repository';
 import { CurrentUserDto } from '@app/common';
-import {
-  getTime,
-  subDays,
-  subHours,
-  subMinutes,
-  subMonths,
-  subSeconds,
-  subWeeks,
-  subYears,
-} from 'date-fns';
 import { Types } from 'mongoose';
+import { transformMetric } from './helper';
+import {
+  getAgoToSeconds,
+  getStartOfTimeFromAgo,
+  getUnitAndNumberFromAgoRange,
+} from '@app/common';
 
 @Injectable()
 export class MetricsService {
@@ -54,97 +50,21 @@ export class MetricsService {
     return this.metricModel.find({}, 20);
   }
 
-  private getTimeInSeconds(duration: string): number {
-    const { value, unit } = this.getUnitAndNumberFromAgoRange(duration);
-    switch (unit) {
-      case 's': // Seconds
-        return value;
-      case 'm': // Minutes
-        return value * 60;
-      case 'h': // Hours
-        return value * 60 * 60;
-      case 'd': // Days
-        return value * 24 * 60 * 60;
-      case 'w': // Weeks
-        return value * 7 * 24 * 60 * 60;
-      case 'mn': // Months (approximate as 30 days)
-        return value * 30 * 24 * 60 * 60;
-      case 'y': // Years
-        return value * 24 * 60 * 60 * 365;
-      default:
-        throw new Error(`Unsupported time unit: ${unit}`);
-    }
-  }
-  /**
-   * Returns the start time based on the provided time range string.
-   * Supports "1h" (1 hour), "1d" (1 day), "1w" (1 week), etc.
-   * Defaults to "1h" if no valid range is provided.
-   * @param timeRange - The time range string (e.g., "1h", "1d", "1w").
-   * @returns A Date object representing the start of the time range.
-   */
-  private getUnitAndNumberFromAgoRange(timeRange: string): { value; unit } {
-    const regex = /^(\d+)([hdwmny]{1,2})$/i; // Match number followed by h, d, or w (case insensitive)
-    // Use the provided timeRange or fallback to default
-    const match = (timeRange || '0h').toLowerCase().match(regex);
-    console.log('match', match);
-    if (!match) {
-      return { value: 0, unit: 'h' };
-    }
-
-    const value = parseInt(match[1], 10); // Extract numeric value
-    const unit = match[2]; // Extract unit (h, d, w, m)
-    return { value, unit };
-  }
-  private getStartOfTimeRange(
-    timeRange: string,
-    toUnixTimeStamp: boolean = true,
-  ): Date | number {
-    const now = new Date();
-    let startDate = now;
-
-    const { value, unit } = this.getUnitAndNumberFromAgoRange(timeRange);
-
-    switch (unit) {
-      case 's': // Seconds
-        startDate = subSeconds(now, value); // Subtract seconds
-        break;
-      case 'm':
-        startDate = subMinutes(now, value); // Subtract minutes
-        break;
-      case 'h':
-        startDate = subHours(now, value); // Subtract hours
-        break;
-      case 'd':
-        startDate = subDays(now, value); // Subtract days
-        break;
-      case 'w':
-        startDate = subWeeks(now, value); // Subtract weeks
-        break;
-      case 'mn':
-        startDate = subMonths(now, value); // Subtract weeks
-        break;
-      case 'y':
-        startDate = subYears(now, value); // Subtract weeks
-        break;
-    }
-    return toUnixTimeStamp ? getTime(startDate) / 1000 : startDate;
-  }
-
   async getCpuUsage(timeRange: string): Promise<any> {
     try {
       let interval = 10; //seconds
       let recordLimit = 120;
-      const rangeInseconds = this.getTimeInSeconds(timeRange);
+      const rangeInseconds = getAgoToSeconds(timeRange);
       if (rangeInseconds > recordLimit) {
         interval = rangeInseconds / recordLimit;
       }
       console.log(
         'Time in give timeragen ',
         timeRange,
-        this.getTimeInSeconds(timeRange),
+        getAgoToSeconds(timeRange),
         interval,
       );
-      const startTimestamp = this.getStartOfTimeRange(timeRange);
+      const startTimestamp = getStartOfTimeFromAgo(timeRange);
       console.log('startTimestamp', startTimestamp);
       const metrics = await this.metricModel.aggregate([
         //Condition
@@ -213,17 +133,17 @@ export class MetricsService {
     try {
       let interval = 10; //seconds
       let recordLimit = 120;
-      const rangeInseconds = this.getTimeInSeconds(timeRange);
+      const rangeInseconds = getAgoToSeconds(timeRange);
       if (rangeInseconds > recordLimit) {
         interval = rangeInseconds / recordLimit;
       }
       console.log(
         'Time in give timeragen ',
         timeRange,
-        this.getTimeInSeconds(timeRange),
+        getAgoToSeconds(timeRange),
         interval,
       );
-      const startTimestamp = this.getStartOfTimeRange(timeRange);
+      const startTimestamp = getStartOfTimeFromAgo(timeRange);
       console.log('startTimestamp', startTimestamp);
       const metrics = await this.metricModel.aggregate([
         //Condition
@@ -287,48 +207,4 @@ export class MetricsService {
       throw new Error('Failed to fetch Mem usage');
     }
   }
-}
-
-const METRIC_TEMPLATES = {
-  mem: {
-    fields: ['total', 'used_percent', 'available_percent'], // Only these fields will be saved
-    tags: ['host'], // Only these tags will be saved
-  },
-  cpu: {
-    fields: ['usage_active', 'usage_system', 'usage_user'], // Only these fields will be saved
-    tags: ['host', 'cpu'], // Only these tags will be saved
-  },
-  // Add templates for other metric names as needed
-};
-
-function transformMetric(metric: any): any {
-  const template = METRIC_TEMPLATES[metric.name];
-
-  if (!template) {
-    // If no template is defined for this metric, skip it
-    return null;
-  }
-
-  const transformedMetric = {
-    name: metric.name,
-    timestamp: metric.timestamp,
-    fields: {},
-    tags: {},
-  };
-
-  // Filter fields based on the template
-  template.fields.forEach((field) => {
-    if (metric.fields[field] !== undefined) {
-      transformedMetric.fields[field] = metric.fields[field];
-    }
-  });
-
-  // Filter tags based on the template
-  template.tags.forEach((tag) => {
-    if (metric.tags[tag] !== undefined) {
-      transformedMetric.tags[tag] = metric.tags[tag];
-    }
-  });
-
-  return transformedMetric;
 }
