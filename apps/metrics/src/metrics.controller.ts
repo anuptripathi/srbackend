@@ -66,7 +66,7 @@ export class MetricsController {
   @Get('ram')
   @RequiredCapability(Actions.READ)
   async getCpuUsage(@Query('ago') ago?: string) {
-    return this.metricsService.getRamUsage(ago);
+    return this.metricsService.getMemUsage(ago);
   }
 
   @Get('cpu')

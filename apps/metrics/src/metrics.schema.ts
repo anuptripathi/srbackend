@@ -9,8 +9,8 @@ export class MetricsDocument extends AbstractDocument {
   @Prop({ type: String, required: true })
   name: string;
 
-  @Prop({ type: Date, required: true })
-  timestamp: Date;
+  @Prop({ required: true })
+  timestamp: number;
 
   @Prop({ type: Map, required: true })
   tags: Map<string, string>;

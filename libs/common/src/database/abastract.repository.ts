@@ -1,5 +1,11 @@
 import { Logger, NotFoundException } from '@nestjs/common';
-import { FilterQuery, Model, Types, UpdateQuery } from 'mongoose';
+import {
+  FilterQuery,
+  Model,
+  PipelineStage,
+  Types,
+  UpdateQuery,
+} from 'mongoose';
 import { AbstractDocument } from './abstract.schema';
 import { CurrentUserDto } from '../dtos';
 import { UserTypes } from '../usertypes';
@@ -145,5 +151,18 @@ export abstract class AbstractRepository<TDocument extends AbstractDocument> {
 
   async estimatedDocumentCount(): Promise<number> {
     return this.model.estimatedDocumentCount();
+  }
+
+  async aggregate<T = TDocument>(
+    pipeline: PipelineStage[],
+    options?: object,
+  ): Promise<T[]> {
+    try {
+      const results = await this.model.aggregate(pipeline, options).exec();
+      return results as T[];
+    } catch (error) {
+      this.logger.error('Error during aggregation', { pipeline, error });
+      throw new Error('Aggregation failed');
+    }
   }
 }

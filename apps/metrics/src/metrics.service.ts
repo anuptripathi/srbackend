@@ -3,7 +3,16 @@ import { Injectable } from '@nestjs/common';
 import { CreateMetricsDto } from './createMetrics.dto';
 import { MetricsRepository } from './metrics.repository';
 import { CurrentUserDto } from '@app/common';
-import { fromUnixTime, subDays, subHours, subMonths, subWeeks } from 'date-fns';
+import {
+  getTime,
+  subDays,
+  subHours,
+  subMinutes,
+  subMonths,
+  subSeconds,
+  subWeeks,
+  subYears,
+} from 'date-fns';
 import { Types } from 'mongoose';
 
 @Injectable()
@@ -25,7 +34,6 @@ export class MetricsService {
         };
         const preparedDocuments = metrics.map((doc) => ({
           ...doc,
-          timestamp: fromUnixTime(doc.timestamp),
           host: doc.tags.host,
           _id: new Types.ObjectId(), // Ensure each document has a unique _id
           ...userData,
@@ -46,6 +54,27 @@ export class MetricsService {
     return this.metricModel.find({}, 20);
   }
 
+  private getTimeInSeconds(duration: string): number {
+    const { value, unit } = this.getUnitAndNumberFromAgoRange(duration);
+    switch (unit) {
+      case 's': // Seconds
+        return value;
+      case 'm': // Minutes
+        return value * 60;
+      case 'h': // Hours
+        return value * 60 * 60;
+      case 'd': // Days
+        return value * 24 * 60 * 60;
+      case 'w': // Weeks
+        return value * 7 * 24 * 60 * 60;
+      case 'mn': // Months (approximate as 30 days)
+        return value * 30 * 24 * 60 * 60;
+      case 'y': // Years
+        return value * 24 * 60 * 60 * 365;
+      default:
+        throw new Error(`Unsupported time unit: ${unit}`);
+    }
+  }
   /**
    * Returns the start time based on the provided time range string.
    * Supports "1h" (1 hour), "1d" (1 day), "1w" (1 week), etc.
@@ -53,85 +82,209 @@ export class MetricsService {
    * @param timeRange - The time range string (e.g., "1h", "1d", "1w").
    * @returns A Date object representing the start of the time range.
    */
-  private getStartOfTimeRange(timeRange: string): Date {
-    const now = new Date();
-    const regex = /^(\d+)([hdwm])$/i; // Match number followed by h, d, or w (case insensitive)
-    const defaultTimeRange = '1h'; // Default time range
-
+  private getUnitAndNumberFromAgoRange(timeRange: string): { value; unit } {
+    const regex = /^(\d+)([hdwmny]{1,2})$/i; // Match number followed by h, d, or w (case insensitive)
     // Use the provided timeRange or fallback to default
-    const match = (timeRange || defaultTimeRange).toLowerCase().match(regex);
-
+    const match = (timeRange || '0h').toLowerCase().match(regex);
+    console.log('match', match);
     if (!match) {
-      throw new Error(
-        'Invalid time range format. Expected format: "1h", "1d", "1w", etc.',
-      );
+      return { value: 0, unit: 'h' };
     }
 
     const value = parseInt(match[1], 10); // Extract numeric value
     const unit = match[2]; // Extract unit (h, d, w, m)
+    return { value, unit };
+  }
+  private getStartOfTimeRange(
+    timeRange: string,
+    toUnixTimeStamp: boolean = true,
+  ): Date | number {
+    const now = new Date();
+    let startDate = now;
+
+    const { value, unit } = this.getUnitAndNumberFromAgoRange(timeRange);
 
     switch (unit) {
-      case 'h':
-        return subHours(now, value); // Subtract hours
-      case 'd':
-        return subDays(now, value); // Subtract days
-      case 'w':
-        return subWeeks(now, value); // Subtract weeks
+      case 's': // Seconds
+        startDate = subSeconds(now, value); // Subtract seconds
+        break;
       case 'm':
-        return subMonths(now, value); // Subtract weeks
-      default:
-        throw new Error(
-          'Unsupported time range unit. Use "h" for hours, "d" for days, or "w" for weeks.',
-        );
+        startDate = subMinutes(now, value); // Subtract minutes
+        break;
+      case 'h':
+        startDate = subHours(now, value); // Subtract hours
+        break;
+      case 'd':
+        startDate = subDays(now, value); // Subtract days
+        break;
+      case 'w':
+        startDate = subWeeks(now, value); // Subtract weeks
+        break;
+      case 'mn':
+        startDate = subMonths(now, value); // Subtract weeks
+        break;
+      case 'y':
+        startDate = subYears(now, value); // Subtract weeks
+        break;
     }
+    return toUnixTimeStamp ? getTime(startDate) / 1000 : startDate;
   }
 
-  async getCpuUsage(timeRange: string): Promise<number> {
+  async getCpuUsage(timeRange: string): Promise<any> {
     try {
-      const timestamp = this.getStartOfTimeRange(timeRange);
-      console.log('timestamp', timestamp);
-      const metrics = await this.metricModel.find({
-        // timestamp: { $gte: timestamp },
-        'tags.cpu': 'cpu-total',
-        name: 'cpu',
-      });
+      let interval = 10; //seconds
+      let recordLimit = 120;
+      const rangeInseconds = this.getTimeInSeconds(timeRange);
+      if (rangeInseconds > recordLimit) {
+        interval = rangeInseconds / recordLimit;
+      }
+      console.log(
+        'Time in give timeragen ',
+        timeRange,
+        this.getTimeInSeconds(timeRange),
+        interval,
+      );
+      const startTimestamp = this.getStartOfTimeRange(timeRange);
+      console.log('startTimestamp', startTimestamp);
+      const metrics = await this.metricModel.aggregate([
+        //Condition
+        {
+          $match: {
+            name: 'cpu', // Example filter: only include documents where `name` is "cpu"
+            timestamp: { $gte: startTimestamp }, // Filter by timestamp
+          },
+        },
+        // Step 1: Add an interval key
+        {
+          $addFields: {
+            intervalBucket: {
+              $multiply: [
+                { $floor: { $divide: ['$timestamp', interval] } }, // Divide by interval and round down
+                interval, // Multiply back by 10 to get the bucket start
+              ],
+            },
+          },
+        },
+        // Step 2: Group by interval
+        {
+          $group: {
+            _id: '$intervalBucket', // Group by interval start
+            avgUsageActive: { $avg: '$fields.usage_active' }, // Average for usage_active
+            avgUsageSystem: { $avg: '$fields.usage_system' }, // Average for usage_system
+            avgUsageUser: { $avg: '$fields.usage_user' }, // Average for usage_user
+            count: { $sum: 1 }, // Count of records in the interval
+          },
+        },
+        // Step 3: Format the output
+        {
+          $project: {
+            _id: 0,
+            intervalBucket: '$_id',
+            avgUsageActive: 1,
+            avgUsageSystem: 1,
+            avgUsageUser: 1,
+            count: 1,
+          },
+        },
+        // Step 4: Sort by interval start (optional)
+        {
+          $sort: { intervalBucket: 1 },
+        },
+        // Step 5: Limit the result (optional)
+        {
+          $limit: recordLimit, // Example limit: return only the first 100 records
+        },
+      ]);
 
       if (!metrics || metrics.length === 0) {
-        throw new Error(
+        console.log(
           'No CPU metrics found for the provided host and time range',
         );
       }
 
-      const cpuMetric = metrics[metrics.length - 1];
-      const cpuUsagePercent = cpuMetric.fields['usage_system'] || 0;
-      return cpuUsagePercent;
+      return { metrics, intervalSec: interval };
     } catch (error) {
       console.error('Error fetching CPU usage:', error);
       throw new Error('Failed to fetch CPU usage');
     }
   }
 
-  async getRamUsage(timeRange: string): Promise<number> {
+  async getMemUsage(timeRange: string): Promise<any> {
     try {
-      const timestamp = this.getStartOfTimeRange(timeRange);
-      console.log('timeRange', timeRange);
-      const metrics = await this.metricModel.find({
-        timestamp: { $gte: timestamp },
-        name: 'mem',
-      });
+      let interval = 10; //seconds
+      let recordLimit = 120;
+      const rangeInseconds = this.getTimeInSeconds(timeRange);
+      if (rangeInseconds > recordLimit) {
+        interval = rangeInseconds / recordLimit;
+      }
+      console.log(
+        'Time in give timeragen ',
+        timeRange,
+        this.getTimeInSeconds(timeRange),
+        interval,
+      );
+      const startTimestamp = this.getStartOfTimeRange(timeRange);
+      console.log('startTimestamp', startTimestamp);
+      const metrics = await this.metricModel.aggregate([
+        //Condition
+        {
+          $match: {
+            name: 'mem', // Example filter: only include documents where `name` is "mem"
+            timestamp: { $gte: startTimestamp }, // Filter by timestamp
+          },
+        },
+        // Step 1: Add an interval key
+        {
+          $addFields: {
+            intervalBucket: {
+              $multiply: [
+                { $floor: { $divide: ['$timestamp', interval] } }, // Divide by interval and round down
+                interval, // Multiply back by 10 to get the bucket start
+              ],
+            },
+          },
+        },
+        // Step 2: Group by interval
+        {
+          $group: {
+            _id: '$intervalBucket', // Group by interval start
+            totalMemory: { $avg: '$fields.total' }, // Average for usage_active
+            usePercent: { $avg: '$fields.used_percent' }, // Average for usage_system
+            avalPercent: { $avg: '$fields.available_percent' }, // Average for usage_user
+            count: { $sum: 1 }, // Count of records in the interval
+          },
+        },
+        // Step 3: Format the output
+        {
+          $project: {
+            _id: 0,
+            intervalBucket: '$_id',
+            totalMemory: 1,
+            usePercent: 1,
+            avalPercent: 1,
+            count: 1,
+          },
+        },
+        // Step 4: Sort by interval start (optional)
+        {
+          $sort: { intervalBucket: 1 },
+        },
+        // Step 5: Limit the result (optional)
+        {
+          $limit: recordLimit, // Example limit: return only the first 100 records
+        },
+      ]);
 
       if (!metrics || metrics.length === 0) {
-        throw new Error(
-          'No RAM metrics found for the provided host and time range',
+        console.log(
+          'No Mem metrics found for the provided host and time range',
         );
       }
 
-      const ramMetric = metrics[metrics.length - 1];
-      const ramUsagePercent = ramMetric.fields['used_percent'] || 0;
-      return ramUsagePercent;
+      return { metrics, intervalSec: interval };
     } catch (error) {
-      console.error('Error fetching RAM usage:', error);
-      throw new Error('Failed to fetch RAM usage');
+      console.error('Error fetching Mem usage:', error);
+      throw new Error('Failed to fetch Mem usage');
     }
   }
 }
