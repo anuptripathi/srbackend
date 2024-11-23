@@ -7,6 +7,7 @@ import {
   Param,
   Delete,
   UseGuards,
+  Query,
 } from '@nestjs/common';
 import { PermissionsService } from './permissions.service';
 import { CreatePermissionDto } from './dto/create-permission.dto';
@@ -43,8 +44,21 @@ export class PermissionsController {
 
   @Get()
   @RequiredCapability(Actions.READ)
-  async findAll() {
-    return this.permissionsService.findAll();
+  async getAllPermissions(
+    @CurrentUser() user: CurrentUserDto,
+    @Query('limit') limit?: number,
+    @Query('offset') offset?: number,
+    @Query('title') title?: string,
+    @Query('subject') subject?: string,
+  ) {
+    console.log(title, subject);
+    return await this.permissionsService.findAll(
+      user,
+      limit,
+      offset,
+      title,
+      subject,
+    );
   }
 
   @Get(':id')

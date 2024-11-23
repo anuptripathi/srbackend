@@ -18,8 +18,36 @@ export class PermissionsService {
     });
   }
 
-  async findAll() {
-    return this.permissionsRepository.find({});
+  async findAll(
+    user: CurrentUserDto,
+    limit: number = 10,
+    offset: number = 0,
+    title?: string,
+    subject?: string,
+  ) {
+    const ownershipCondition =
+      this.permissionsRepository.getOwnershipCondition(user);
+    let condition = ownershipCondition;
+    if (title)
+      condition = { ...condition, title: { $regex: title, $options: 'i' } };
+    if (subject)
+      condition = { ...condition, subject: { $regex: subject, $options: 'i' } };
+
+    const data = await this.permissionsRepository.find(
+      condition,
+      limit,
+      offset,
+    );
+    const estimatedCount =
+      await this.permissionsRepository.estimatedDocumentCount();
+
+    if (estimatedCount <= 10000) {
+      const totalRecords =
+        await this.permissionsRepository.countDocuments(condition);
+      return { data, totalRecords, cursorBased: false };
+    } else {
+      return { data, cursorBased: true };
+    }
   }
 
   async findOne(_id: string) {
