@@ -1,85 +1,118 @@
-<p align="center">
-  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="120" alt="Nest Logo" /></a>
-</p>
+NestJs NextJs Skaffold Setup Steps
 
-[circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
-[circleci-url]: https://circleci.com/gh/nestjs/nest
+Copy from Windows folder (mnt => mount) to WSL (windows sub system folder)
+cp -r /mnt/c/Users\Anup\Downloads\permissions /code/siterel/srbackend/apps/srmain/src/
+cp -r /mnt/c/Users\Anup\Downloads\roles_module /code/siterel/srbackend/apps/srmain/src/roles
 
-  <p align="center">A progressive <a href="http://nodejs.org" target="_blank">Node.js</a> framework for building efficient and scalable server-side applications.</p>
-    <p align="center">
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/dm/@nestjs/common.svg" alt="NPM Downloads" /></a>
-<a href="https://circleci.com/gh/nestjs/nest" target="_blank"><img src="https://img.shields.io/circleci/build/github/nestjs/nest/master" alt="CircleCI" /></a>
-<a href="https://coveralls.io/github/nestjs/nest?branch=master" target="_blank"><img src="https://coveralls.io/repos/github/nestjs/nest/badge.svg?branch=master#9" alt="Coverage" /></a>
-<a href="https://discord.gg/G7Qnnhy" target="_blank"><img src="https://img.shields.io/badge/discord-online-brightgreen.svg" alt="Discord"/></a>
-<a href="https://opencollective.com/nest#backer" target="_blank"><img src="https://opencollective.com/nest/backers/badge.svg" alt="Backers on Open Collective" /></a>
-<a href="https://opencollective.com/nest#sponsor" target="_blank"><img src="https://opencollective.com/nest/sponsors/badge.svg" alt="Sponsors on Open Collective" /></a>
-  <a href="https://paypal.me/kamilmysliwiec" target="_blank"><img src="https://img.shields.io/badge/Donate-PayPal-ff3f59.svg" alt="Donate us"/></a>
-    <a href="https://opencollective.com/nest#sponsor"  target="_blank"><img src="https://img.shields.io/badge/Support%20us-Open%20Collective-41B883.svg" alt="Support us"></a>
-  <a href="https://twitter.com/nestframework" target="_blank"><img src="https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow" alt="Follow us on Twitter"></a>
-</p>
-  <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
-  [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
+git config --global user.email "youremail like anup.giit@gmail.com"
+git config --global user.name "your username like anuptripathi"
 
-## Description
+sudo apt-get remove nodejs
+sudo apt-get remove npm
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+sudo apt remove --purge libnode-dev
+sudo apt remove --purge nodejs
+sudo apt autoremove
+sudo apt clean
+sudo apt update
+#install specific version, eg 18 in following example.
+curl -fsSL https://deb.nodesource.com/setup_18.x | sudo -E bash -
+sudo apt install -y nodejs
+node -v
 
-## Project setup
+k8s/sleepr#
+helm install sleepr .
+helm upgrade sleepr .
+helm uninstall sleepr
+kubectl describe pod auth-8467ffc8fc-blf4r
 
-```bash
-$ pnpm install
-```
+kubectl get po (or pod)
+kubectl get svc (or service)
+kubectl logs pod-id --follow (optinally), --previous (if failed after running once)
 
-## Compile and run the project
+kubectl rollout restart deployment notifications (after fixing the image.)
 
-```bash
-# development
-$ pnpm run start
+mongodb cloud
+username: localhostuser
+password: o0JP5V3434jkPveAPyXz9ndjljlfdfldjfld
 
-# watch mode
-$ pnpm run start:dev
+mongodb+srv://localhostuser:dfhlkdfldkf@cluster0.wieaize.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0
 
-# production mode
-$ pnpm run start:prod
-```
+kubectl create secret generic mongodb --from-literal=connectionString=mongodb+srv://localhostuser:dfkdhfjkdhfkjd@cluster0.wieaize.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0
 
-## Run tests
+kubectl delete secret mongodb
+kubectl create secret generic mongodb --from-literal=connectionString=mongodb+srv://localhostuser:93479374@cluster0.wieaize.mongodb.net/siterel?retryWrites=true&w=majority&appName=Cluster0
 
-```bash
-# unit tests
-$ pnpm run test
+kubectl create secret generic jwt --from-literal=jwtSecret=4YdOfiPtyv1aYAjSdfdfdfdfdfdfdr7MidPOnmZHtT4AdLAvQldpHvD2SROwEXS7E1JQHhUn0XEy0bOCCHnI8zIxWKocI7ASb7Kh3uQ0spn9FsZ
 
-# e2e tests
-$ pnpm run test:e2e
+kubectl create secret generic stripe --from-literal=apiKey=sk_test_UGgMKAi7vjrbJ2xkFI7dfjkdljfldjkfjldjfl dljfX0IHnbznu6SiEKjkYzSga9NTxSTuS5GdRNCXxkjqsFVJSIEJIwFfyRrRLe00JL5ExNPw
 
-# test coverage
-$ pnpm run test:cov
-```
+or kubectl create secret generic auth-secrets --from-env-file=.env
 
-## Resources
+kubectl delete secret <secret-name>
+kubectl delete secret mongodb
+kubectl delete secret jwt
+kubectl delete secret stripe
 
-Check out a few resources that may come in handy when working with NestJS:
+kubectl get secret mongodb -o yaml
 
-- Visit the [NestJS Documentation](https://docs.nestjs.com) to learn more about the framework.
-- For questions and support, please visit our [Discord channel](https://discord.gg/G7Qnnhy).
-- To dive deeper and get more hands-on experience, check out our official video [courses](https://courses.nestjs.com/).
-- Visualize your application graph and interact with the NestJS application in real-time using [NestJS Devtools](https://devtools.nestjs.com).
-- Need help with your project (part-time to full-time)? Check out our official [enterprise support](https://enterprise.nestjs.com).
-- To stay in the loop and get updates, follow us on [X](https://x.com/nestframework) and [LinkedIn](https://linkedin.com/company/nestjs).
-- Looking for a job, or have a job to offer? Check out our official [Jobs board](https://jobs.nestjs.com).
+kubectl create service clusterip auth --tcp=3001,3002 --dry-run=client -o yaml > service.yaml
+kubectl create deployment auth --dry-run=cient -o yaml> deployment.yaml ~~
 
-## Support
+helm list
 
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
+#grpc work, ts-proto and protoc helps to create type definitions against each proto files
+pnpm add -D ts-proto
+protoc --plugin=./node_modules/.bin/protoc-gen-ts_proto --ts_proto_out=./libs/common/src/types/ --ts_proto_opt=nestJs=true ./proto/notifications.proto
 
-## Stay in touch
+protoc --plugin=./node_modules/.bin/protoc-gen-ts_proto --ts_proto_out=./libs/common/src/types/ --ts_proto_opt=nestJs=true ./proto/auth.proto
 
-- Author - [Kamil Myśliwiec](https://twitter.com/kammysliwiec)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
+kubectl get services
+You should see something like:
+NAME TYPE CLUSTER-IP EXTERNAL-IP PORT(S) AGE
+auth ClusterIP 10.96.150.10 <none> 5001/TCP 16m
+reservations ClusterIP 10.96.150.11 <none> 5002/TCP
 
-## License
+npx prisma migrate dev --name name_the_change
 
-Nest is [MIT licensed](https://github.com/nestjs/nest/blob/master/LICENSE).
+or
+npx prisma migrate dev --create-only --name name_the_change
+npx prisma migrate dev
+
+# only create schema and then check manually in created migration file and then run by above command again.
+
+#This command will sync the Prisma schema with your database without altering the existing data. you can manually change db and then take pull.
+npx prisma db pull # to update your prisma schema
+npx prisma generate # to generate the prisam client data types
+npx prisma migrate resolve --applied 20241006173655_add_timestamps_to_user
+npx prisma migrate resolve --applied "20241011111515_roles_permissions_tabl"
+
+skaffold dev
+skaffold fix
+skaffold delete
+skaffold run --tail# to just run, no file change lookup.
+#all above with optional file name: eg, skaffold dev -f skaffold-prod.yaml
+
+save without prettier or formatting on vs code ctr+k and then ctr+shift+s
+
+{
+"name": "Admin Role",
+"description": "This role grants admin level permissions.",
+"permissions": [
+{
+"title": "Manage Users",
+"subject": "users",
+"actions": ["add", "edit", "delete", "read"]
+},
+{
+"title": "Manage Roles",
+"subject": "roles",
+"actions": ["add", "edit", "delete", "read"]
+},
+{
+"title": "Manage Products",
+"subject": "products",
+"actions": ["add", "edit", "delete", "read"]
+}
+]
+}
